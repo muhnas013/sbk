@@ -4,12 +4,12 @@
 > Tandai `[x]` bila selesai. Item bertanda 🔴 adalah _blocker_ — menahan pekerjaan lain.
 > Item bertanda 👤 menunggu input dari pihak perusahaan, bukan developer.
 
-**Progres keseluruhan:** 212 / 273 item
+**Progres keseluruhan:** 217 / 273 item
 
 | Fase                    | Status         | Progres |
 | ----------------------- | -------------- | ------- |
-| 0. Pra-Pengerjaan       | ⬜ Belum mulai | 0/14    |
-| 1. Fondasi              | 🟡 Berjalan    | 35/39   |
+| 0. Pra-Pengerjaan       | 🟡 Berjalan    | 2/14    |
+| 1. Fondasi              | 🟡 Berjalan    | 38/39   |
 | 2. Model Konten & Admin | 🟡 Berjalan    | 60/61   |
 | 3. Halaman Inti         | 🟡 Berjalan    | 43/44   |
 | 4. Modul Tambahan       | 🟡 Berjalan    | 28/30   |
@@ -26,7 +26,8 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 ### 0.1 Keputusan yang Menunggu Jawaban
 
 - [ ] 🔴 👤 Konfirmasi nama domain (sudah dimiliki / perlu didaftarkan) + akses DNS
-- [ ] 🔴 👤 Logo resmi format vektor (SVG/AI/EPS) — versi terang & gelap
+- [x] Logo tidak lagi memblokir: header/footer menampilkan nama perusahaan sebagai teks
+      sampai berkas logo diunggah lewat Pengaturan Situs — [ ] 👤 berkas logo menyusul
 - [ ] 👤 Panduan brand: warna resmi, font resmi (jika ada). Jika tidak ada → pakai usulan PRD §10.2
 - [ ] 👤 Keputusan: nilai kontrak proyek boleh tampil publik atau selalu disembunyikan
 - [ ] 👤 Keputusan: dokumen legalitas ditampilkan sebagai gambar watermark / PDF unduh / form-gated
@@ -38,7 +39,8 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 
 ### 0.2 Pengadaan Infrastruktur
 
-- [ ] 🔴 VPS disiapkan (min. 2 vCPU / 4 GB RAM / 50 GB SSD, Ubuntu 24.04 LTS)
+- [x] Server ditetapkan: **server-app2 (10.10.10.21)** — server bersama yang sudah
+      menjalankan nginx, sehingga dipakai `docker-compose.app2.yml` (tanpa Caddy)
 - [ ] Akses SSH ke VPS + user non-root dengan sudo
 - [ ] Akun object storage untuk backup off-site (S3-compatible: Wasabi/Backblaze/IDCloudHost)
 - [ ] Akun layanan email transaksional (SMTP/Resend) untuk notifikasi form
@@ -70,8 +72,9 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 - [x] Volume persisten untuk data Postgres dan folder media
 - [x] `Caddyfile`: reverse proxy, HTTPS otomatis, security headers, kompresi brotli/gzip
 - [x] Verifikasi `docker compose config` valid (seluruh variabel & dependensi service terbaca)
-- [ ] Verifikasi build image `app` — belum bisa diuji di mesin ini: proses `docker build` tidak punya akses jaringan sehingga `npm ci` gagal. Diuji di VPS/CI.
-- [ ] 🔴 Verifikasi `docker compose up` end-to-end di VPS (menunggu VPS & domain)
+- [x] Verifikasi build image `app` — berhasil, dan seluruh stack diuji dari volume kosong:
+      migrasi diterapkan otomatis lalu seluruh rute membalas 200
+- [x] Verifikasi `docker compose up` end-to-end (diuji lokal dengan override app2)
 - [x] Endpoint health check `/health`
 
 ### 1.3 Design System
@@ -93,8 +96,9 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 - [x] GitHub Actions: lint + format check + typecheck + build pada setiap push
 - [x] GitHub Actions: `npm audit --audit-level=high` sebagai job terpisah
 - [x] Workflow deploy otomatis ke VPS saat push ke `main` (+ verifikasi health check)
-- [ ] 🔴 Subdomain staging (`staging.<domain>`) aktif dengan HTTPS (menunggu domain)
-- [ ] 🔴 Deploy pertama ke staging berhasil (menunggu VPS & domain)
+- [x] Keputusan: tanpa staging — deploy langsung ke server-app2
+- [ ] 🔴 Deploy pertama ke server-app2 (prompt siap di `docs/prompt-deploy-app2.md`;
+      menunggu sertifikat TLS yang diurus pemilik proyek)
 
 ### 1.5 Verifikasi Fase 1
 

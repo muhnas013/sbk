@@ -657,6 +657,16 @@ export interface User {
    */
   isActive?: boolean | null;
   avatar?: (number | null) | Media;
+  /**
+   * Sidik jari perangkat yang pernah dipakai login. Hapus seluruh baris untuk memaksa notifikasi login berikutnya.
+   */
+  knownDevices?:
+    | {
+        fingerprint: string;
+        firstSeenAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   lastLoginAt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1755,6 +1765,13 @@ export interface UsersSelect<T extends boolean = true> {
   role?: T;
   isActive?: T;
   avatar?: T;
+  knownDevices?:
+    | T
+    | {
+        fingerprint?: T;
+        firstSeenAt?: T;
+        id?: T;
+      };
   lastLoginAt?: T;
   updatedAt?: T;
   createdAt?: T;

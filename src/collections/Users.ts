@@ -1,5 +1,6 @@
 import { APIError, type CollectionConfig } from 'payload'
 import { adminOnly, selfOrSuperAdmin, superAdminFieldAccess, superAdminOnly } from '@/access'
+import { fingerprintOf, sendNewDeviceAlert } from '@/lib/login-alert'
 
 /** Panjang minimum kata sandi akun admin (prd.md §6.4). */
 const MIN_PASSWORD_LENGTH = 12
@@ -82,6 +83,20 @@ export const Users: CollectionConfig = {
       admin: { position: 'sidebar' },
     },
     {
+      name: 'knownDevices',
+      type: 'array',
+      label: 'Perangkat Dikenal',
+      admin: {
+        readOnly: true,
+        description:
+          'Sidik jari perangkat yang pernah dipakai login. Hapus seluruh baris untuk memaksa notifikasi login berikutnya.',
+      },
+      fields: [
+        { name: 'fingerprint', type: 'text', required: true },
+        { name: 'firstSeenAt', type: 'date' },
+      ],
+    },
+    {
       name: 'lastLoginAt',
       type: 'date',
       label: 'Terakhir Login',
@@ -114,17 +129,49 @@ export const Users: CollectionConfig = {
     ],
     afterLogin: [
       async ({ req, user }) => {
+        const ip =
+          req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+          req.headers.get('x-real-ip') ||
+          'tidak diketahui'
+        const userAgent = req.headers.get('user-agent') ?? 'tidak diketahui'
+        const fingerprint = fingerprintOf(ip, userAgent)
+
+        const known = (user as { knownDevices?: { fingerprint: string }[] }).knownDevices ?? []
+        const isNewDevice = !known.some((device) => device.fingerprint === fingerprint)
+
         // `req` wajib diteruskan agar update ini ikut transaksi login.
         // Tanpa itu, query berjalan di koneksi terpisah dan menunggu lock
         // baris user yang masih dipegang transaksi login — permintaan menggantung.
         await req.payload.update({
           collection: 'users',
           id: user.id,
-          data: { lastLoginAt: new Date().toISOString() },
+          data: {
+            lastLoginAt: new Date().toISOString(),
+            knownDevices: isNewDevice
+              ? [...known, { fingerprint, firstSeenAt: new Date().toISOString() }].slice(-20)
+              : known,
+          },
           overrideAccess: true,
           req,
           context: { skipAudit: true },
         })
+
+        if (isNewDevice && known.length > 0) {
+          // Notifikasi dilewati pada login pertama sebuah akun — saat itu setiap
+          // perangkat masih "baru" dan emailnya hanya jadi gangguan.
+          // Kegagalan kirim email tidak boleh menggagalkan login itu sendiri.
+          try {
+            await sendNewDeviceAlert({
+              req,
+              email: user.email,
+              name: (user as { name?: string }).name ?? user.email,
+              ip,
+              userAgent,
+            })
+          } catch (error) {
+            req.payload.logger.warn(`Gagal mengirim notifikasi login baru: ${String(error)}`)
+          }
+        }
       },
     ],
   },

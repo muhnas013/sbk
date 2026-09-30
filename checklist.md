@@ -4,13 +4,13 @@
 > Tandai `[x]` bila selesai. Item bertanda 🔴 adalah _blocker_ — menahan pekerjaan lain.
 > Item bertanda 👤 menunggu input dari pihak perusahaan, bukan developer.
 
-**Progres keseluruhan:** 209 / 273 item
+**Progres keseluruhan:** 211 / 274 item
 
 | Fase                    | Status         | Progres |
 | ----------------------- | -------------- | ------- |
 | 0. Pra-Pengerjaan       | ⬜ Belum mulai | 0/14    |
 | 1. Fondasi              | 🟡 Berjalan    | 35/39   |
-| 2. Model Konten & Admin | 🟡 Berjalan    | 57/61   |
+| 2. Model Konten & Admin | 🟡 Berjalan    | 59/62   |
 | 3. Halaman Inti         | 🟡 Berjalan    | 43/44   |
 | 4. Modul Tambahan       | 🟡 Berjalan    | 28/30   |
 | 5. Kualitas & Hardening | 🟡 Berjalan    | 44/49   |
@@ -172,8 +172,13 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 - [x] Audit log perubahan konten (siapa, apa, kapan) — otomatis untuk seluruh koleksi
 - [x] Validasi tipe & ukuran berkas pada seluruh unggahan, dengan pesan galat berbahasa Indonesia
 - [x] Proteksi CSRF aktif — permintaan tulis berbasis cookie tanpa Origin yang sah ditolak
-- [ ] 2FA (TOTP) wajib untuk Super Admin & Admin — **belum dikerjakan**, butuh strategi auth kustom Payload
-- [ ] Notifikasi email saat login dari perangkat/IP baru — menunggu adapter email (Fase 4)
+- [x] Pembatasan akses `/admin` per daftar IP (`ADMIN_IP_ALLOWLIST`, mendukung IP tunggal & CIDR)
+- [ ] 👤 **2FA (TOTP) — butuh keputusan Anda.** Payload 3.90 tidak menyediakan 2FA bawaan dan
+      tidak punya titik ekstensi untuk menambah field pada form login. Menerapkannya berarti
+      mengganti seluruh halaman login dengan komponen sendiri. Membangun separuh jalan justru
+      berbahaya: admin yang mengaktifkan 2FA akan terkunci dari panel. Opsi di §12 laporan.
+- [x] Notifikasi email saat login dari perangkat/IP baru — sidik jari perangkat disimpan
+      sebagai hash, bukan IP/user agent mentah; login pertama sebuah akun tidak memicu notifikasi
 - [ ] 👤 **Keputusan diperlukan:** PRD meminta argon2id. Payload 3.90 memakai PBKDF2-SHA256 600.000 iterasi
       (sesuai rekomendasi OWASP terkini). Mengganti ke argon2id berarti menambal internal framework
       dan menanggung risiko saat upgrade. Rekomendasi: tetap pakai bawaan Payload.

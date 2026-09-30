@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { clientIpFrom, isAdminIpAllowed } from '@/lib/admin-ip'
 import { DEFAULT_LOCALE, LOCALES } from '@/lib/constants'
 
 const PUBLIC_FILE = /\.(.*)$/
@@ -11,6 +12,14 @@ const PUBLIC_FILE = /\.(.*)$/
  */
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // Daftar izin IP untuk panel admin, bila dikonfigurasi. Diperiksa sebelum
+  // apa pun yang lain supaya halaman login tidak ikut terekspos.
+  if (pathname.startsWith('/admin') && !isAdminIpAllowed(clientIpFrom(request.headers))) {
+    return new NextResponse('Akses panel admin dibatasi untuk jaringan tertentu.', {
+      status: 403,
+    })
+  }
 
   if (
     pathname.startsWith('/admin') ||

@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# Override untuk server yang SUDAH menjalankan nginx di port 80/443
+# (mis. server-app2, yang juga melayani situs lain).
+#
+# Pemakaian:
+#   docker compose -f docker-compose.yml -f docker-compose.app2.yml up -d --build
+#
+# Bedanya dengan konfigurasi bawaan:
+#   - Caddy tidak dijalankan, supaya tidak berebut port 80/443 dengan nginx
+#     yang sudah ada. Merebut port itu akan mematikan situs lain di server ini.
+#   - Aplikasi diikat ke 127.0.0.1 saja; hanya nginx di host yang bisa
+#     menjangkaunya, tidak terbuka dari jaringan.
+#   - TLS dan security header menjadi tanggung jawab nginx (lihat
+#     deploy/nginx/sabhumikaryabarito.conf).
+# ---------------------------------------------------------------------------
+services:
+  caddy:
+    # Compose tidak punya cara menghapus service dari file dasar, jadi
+    # dipindahkan ke profil yang tidak pernah diaktifkan.
+    profiles: ['tidak-dipakai']
+
+  app:
+    ports:
+      - '127.0.0.1:${APP_PORT:-3100}:3000'
+    networks: [internal]

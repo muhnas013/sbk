@@ -96,6 +96,43 @@ Akun ini otomatis menjadi Super Admin.
 
 ---
 
+## 2b. Deployment di Server yang Sudah Menjalankan nginx
+
+`server-app2` (10.10.10.21) sudah menjalankan nginx di port 80 dan 443 untuk
+situs lain. Konfigurasi bawaan proyek ini menjalankan Caddy di kedua port
+tersebut — menjalankannya apa adanya di sana akan **mematikan situs lain di
+server itu**. Untuk server seperti ini pakai berkas override:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.app2.yml up -d --build
+```
+
+Bedanya:
+
+|                 | Bawaan (VPS khusus) | Override app2                                 |
+| --------------- | ------------------- | --------------------------------------------- |
+| Port 80/443     | Caddy               | nginx yang sudah ada di host                  |
+| TLS             | Otomatis oleh Caddy | Ditangani nginx                               |
+| Aplikasi        | Internal            | `127.0.0.1:3100`, tidak terbuka dari jaringan |
+| Security header | `Caddyfile`         | `deploy/nginx/sabhumikaryabarito.conf`        |
+
+Pasang vhost-nya:
+
+```bash
+sudo cp deploy/nginx/sabhumikaryabarito.conf /etc/nginx/sites-available/
+sudo ln -s /etc/nginx/sites-available/sabhumikaryabarito.conf /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+Sesuaikan path sertifikat di berkas itu dengan cara penerbitan yang dipakai
+server tersebut (certbot, acme.sh, atau Cloudflare Origin Certificate).
+
+> **Jangan jalankan `scripts/vps-setup.sh` di server bersama.** Skrip itu
+> menyetel ulang firewall dan mengubah konfigurasi SSH — aman pada VPS baru
+> yang kosong, merusak pada server yang sudah melayani hal lain.
+
+---
+
 ## 3. Deployment Rutin
 
 Push ke branch `main` memicu GitHub Actions yang membangun ulang dan

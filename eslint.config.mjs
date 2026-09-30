@@ -7,6 +7,8 @@ const config = [
       '.next/**',
       'node_modules/**',
       'src/payload-types.ts',
+      // Berkas migrasi dihasilkan Payload; jangan disunting tangan.
+      'src/migrations/**',
       'src/app/(payload)/admin/importMap.js',
     ],
   },

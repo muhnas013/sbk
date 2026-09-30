@@ -20,7 +20,26 @@ ENV PAYLOAD_SECRET=build-time-placeholder-secret
 
 RUN npm run generate:importmap && npm run build
 
-# --- Tahap 3: runner -------------------------------------------------------
+# --- Tahap 3: migrator -----------------------------------------------------
+# Migrasi butuh CLI Payload beserta seluruh dependensi dan berkas sumber, yang
+# sengaja tidak ikut ke image runtime. Dijalankan sebagai container sekali
+# pakai sebelum aplikasi menyala.
+FROM node:22-alpine AS migrator
+WORKDIR /app
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+
+ENV NODE_ENV=production
+# Nilai dummy dari tahap build tidak boleh terbawa ke runtime.
+ENV DATABASE_URI=""
+ENV PAYLOAD_SECRET=""
+
+CMD ["npx", "payload", "migrate"]
+
+# --- Tahap 4: runner -------------------------------------------------------
 FROM node:22-alpine AS runner
 WORKDIR /app
 

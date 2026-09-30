@@ -163,16 +163,28 @@ docker compose up -d --no-deps app
 ## 4. Migrasi Database
 
 Di pengembangan, Payload menyinkronkan skema otomatis (`push: true`).
-**Di produksi `push` dimatikan** — perubahan skema wajib lewat berkas migrasi:
+**Di produksi `push` dimatikan** — skema hanya berubah lewat berkas migrasi
+di `src/migrations/`.
+
+**Migrasi diterapkan otomatis saat deploy.** Compose menjalankan service
+`migrate` lebih dulu; aplikasi baru menyala setelah service itu selesai dengan
+sukses. Jadi skema tidak mungkin tertinggal karena langkah manual terlupa.
+
+Membuat migrasi baru setelah mengubah koleksi atau global:
 
 ```bash
 npm run migrate:create nama_perubahan   # di mesin pengembangan
-git commit && git push                  # migrasi ikut ter-deploy
-docker compose exec app npm run migrate # di VPS
+git add src/migrations && git commit    # migrasi WAJIB ikut ter-commit
 ```
 
-Menjalankan migrasi sebelum backup adalah kesalahan yang mahal. Selalu backup
-lebih dulu.
+Memeriksa status di server:
+
+```bash
+docker compose run --rm migrate npx payload migrate:status
+```
+
+> Backup sebelum deploy yang memuat migrasi. Migrasi dapat menghapus kolom,
+> dan pemulihan jauh lebih mudah daripada menyusun ulang data yang hilang.
 
 ---
 

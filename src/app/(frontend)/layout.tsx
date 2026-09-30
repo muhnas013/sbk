@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
 import { headers } from 'next/headers'
 import { DEFAULT_LOCALE, isLocale } from '@/lib/constants'
+import { getGlobal } from '@/lib/payload'
+import type { SeoDefault, SiteSetting } from '@/payload-types'
 import './globals.css'
 
 /*
@@ -22,14 +24,25 @@ const inter = Inter({
   display: 'swap',
 })
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'),
-  title: {
-    default: 'PT Sabhumi Karya Barito',
-    template: '%s | PT Sabhumi Karya Barito',
-  },
-  description:
-    'Perusahaan konstruksi, konsultan perencanaan, dan pengadaan material yang melayani proyek pemerintah dan swasta.',
+export const generateMetadata = async (): Promise<Metadata> => {
+  const [site, seo] = await Promise.all([
+    getGlobal<SiteSetting>('site-settings', DEFAULT_LOCALE, 0),
+    getGlobal<SeoDefault>('seo-defaults', DEFAULT_LOCALE, 0),
+  ])
+
+  const companyName = site.companyName || 'PT Sabhumi Karya Barito'
+  const template = seo.titleTemplate?.includes('%s')
+    ? seo.titleTemplate.replace('%s', '%s')
+    : `%s | ${companyName}`
+
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'),
+    title: { default: companyName, template },
+    description: seo.defaultDescription ?? site.shortDescription ?? undefined,
+    // Kode verifikasi Search Console dikelola dari panel admin agar tim
+    // tidak perlu menyentuh kode saat memverifikasi ulang domain.
+    verification: seo.noIndex ? undefined : { google: site.searchConsoleVerification ?? undefined },
+  }
 }
 
 export const viewport: Viewport = {

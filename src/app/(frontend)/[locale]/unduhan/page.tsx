@@ -83,7 +83,7 @@ const DownloadsPage = async ({ params }: { params: Promise<{ locale: string }> }
                     >
                       <div className="flex gap-4">
                         <FileText
-                          className="mt-0.5 h-5 w-5 shrink-0 text-accent"
+                          className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--accent-text)]"
                           aria-hidden="true"
                         />
                         <div>

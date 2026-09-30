@@ -33,7 +33,7 @@ export const Footer = ({
   contact: FooterContact
   legalNote?: string | null
 }) => (
-  <footer className="bg-ink text-paper">
+  <footer className="tone-dark bg-ink text-paper">
     <Container className="grid gap-12 py-16 lg:grid-cols-4 lg:py-20">
       <div className="lg:col-span-1">
         <Link href={`/${locale}`} className="font-heading text-sm font-extrabold uppercase">
@@ -45,7 +45,7 @@ export const Footer = ({
 
       {columns.map((column) => (
         <nav key={column.title} aria-label={column.title}>
-          <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-accent">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--accent-text)]">
             {column.title}
           </h2>
           <ul className="mt-5 space-y-3">
@@ -64,7 +64,7 @@ export const Footer = ({
       ))}
 
       <div>
-        <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-accent">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--accent-text)]">
           {dict.nav.contact}
         </h2>
         <ul className="mt-5 space-y-4 text-xs text-stone-light">

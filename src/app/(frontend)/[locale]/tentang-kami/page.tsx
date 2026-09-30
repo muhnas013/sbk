@@ -76,7 +76,7 @@ const AboutPage = async ({ params }: { params: Promise<{ locale: string }> }) =>
                 <ol className="space-y-4">
                   {about.mission.map((item, index) => (
                     <li key={item.id ?? index} className="flex gap-4 text-sm text-stone-light">
-                      <span className="shrink-0 font-heading font-bold text-accent">
+                      <span className="shrink-0 font-heading font-bold text-[color:var(--accent-text)]">
                         {String(index + 1).padStart(2, '0')}
                       </span>
                       <span className="leading-relaxed">{item.text}</span>
@@ -123,7 +123,9 @@ const AboutPage = async ({ params }: { params: Promise<{ locale: string }> }) =>
                     className="absolute left-0 top-1.5 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-accent"
                     aria-hidden="true"
                   />
-                  <p className="font-heading text-sm font-bold text-accent">{milestone.year}</p>
+                  <p className="font-heading text-sm font-bold text-[color:var(--accent-text)]">
+                    {milestone.year}
+                  </p>
                   <h3 className="mt-1 font-heading text-base font-bold">{milestone.title}</h3>
                   {milestone.description && (
                     <p className="mt-2 max-w-2xl text-xs leading-relaxed text-stone">
@@ -177,7 +179,7 @@ const AboutPage = async ({ params }: { params: Promise<{ locale: string }> }) =>
                     />
                   </div>
                   <h3 className="mt-5 font-heading text-base font-bold">{member.name}</h3>
-                  <p className="mt-1 text-xs uppercase tracking-wider text-accent">
+                  <p className="mt-1 text-xs uppercase tracking-wider text-[color:var(--accent-text)]">
                     {member.position}
                   </p>
                   {member.bio && (

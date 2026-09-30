@@ -30,7 +30,7 @@ export const AboutIntro = ({
           )}
           <RichText data={data.aboutContent} className="mt-6" />
           <ButtonLink href={`/${locale}/tentang-kami`} variant="secondary" className="mt-8">
-            {dict.common.readMore}
+            {dict.common.aboutCta}
           </ButtonLink>
         </div>
 

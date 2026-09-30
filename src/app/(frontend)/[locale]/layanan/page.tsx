@@ -67,7 +67,7 @@ const ServicesPage = async ({ params }: { params: Promise<{ locale: string }> })
                 </Heading>
                 <Link
                   href={`/${locale}/divisi/${division.slug}`}
-                  className="text-xs font-medium underline underline-offset-4 hover:text-accent"
+                  className="text-xs font-medium underline underline-offset-4 hover:text-[color:var(--accent-text)]"
                 >
                   {dict.common.viewDetail}
                 </Link>

@@ -7,6 +7,7 @@ import { MediaImage } from '@/components/media-image'
 import { PageHero } from '@/components/page-hero'
 import { ProjectCard } from '@/components/project-card'
 import { RichText } from '@/components/rich-text'
+import { BreadcrumbSchema } from '@/components/structured-data'
 import { getDictionary } from '@/i18n/dictionaries'
 import { isLocale } from '@/lib/constants'
 import { findPublished, findPublishedBySlug } from '@/lib/payload'
@@ -49,18 +50,22 @@ const ServiceDetailPage = async ({ params }: Params) => {
     where: { division: { equals: divisionId } },
   })
 
+  const breadcrumb = [
+    { label: dict.nav.home, href: `/${locale}` },
+    { label: dict.nav.services, href: `/${locale}/layanan` },
+    { label: service.title },
+  ]
+
   return (
     <>
+      <BreadcrumbSchema items={breadcrumb} locale={locale} />
+
       <PageHero
         eyebrow={divisionName}
         title={service.title}
         description={service.summary}
         image={service.coverImage}
-        breadcrumb={[
-          { label: dict.nav.home, href: `/${locale}` },
-          { label: dict.nav.services, href: `/${locale}/layanan` },
-          { label: service.title },
-        ]}
+        breadcrumb={breadcrumb}
       />
 
       <Section spacing="lg">
@@ -76,7 +81,7 @@ const ServiceDetailPage = async ({ params }: Params) => {
                 <ol className="mt-8 space-y-8">
                   {service.process.map((step, index) => (
                     <li key={step.id ?? index} className="flex gap-6">
-                      <span className="shrink-0 font-heading text-lg font-extrabold text-accent">
+                      <span className="shrink-0 font-heading text-lg font-extrabold text-[color:var(--accent-text)]">
                         {String(index + 1).padStart(2, '0')}
                       </span>
                       <div>

@@ -29,7 +29,7 @@ export const CertificationStrip = ({
           </div>
           <Link
             href={`/${locale}/legalitas`}
-            className="text-xs font-medium underline underline-offset-4 hover:text-accent"
+            className="text-xs font-medium underline underline-offset-4 hover:text-[color:var(--accent-text)]"
           >
             {dict.common.viewAll}
           </Link>
@@ -38,7 +38,10 @@ export const CertificationStrip = ({
         <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {certifications.map((cert) => (
             <li key={cert.id} className="flex items-start gap-4 border border-line bg-paper p-5">
-              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+              <ShieldCheck
+                className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--accent-text)]"
+                aria-hidden="true"
+              />
               <div>
                 <p className="text-sm font-medium text-ink">{cert.name}</p>
                 {cert.issuer && <p className="mt-1 text-xs text-stone">{cert.issuer}</p>}

@@ -20,6 +20,7 @@ export default function proxy(request: NextRequest) {
     pathname === '/health' ||
     pathname.startsWith('/unduh/') ||
     pathname === '/sitemap.xml' ||
+    pathname === '/manifest.webmanifest' ||
     pathname === '/robots.txt' ||
     PUBLIC_FILE.test(pathname)
   ) {

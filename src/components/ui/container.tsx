@@ -16,7 +16,7 @@ type SectionProps = ComponentProps<'section'> & {
 const toneClass = {
   default: 'bg-paper text-ink',
   alt: 'bg-paper-alt text-ink',
-  dark: 'bg-ink text-paper',
+  dark: 'bg-ink text-paper tone-dark',
 } as const
 
 const spacingClass = {

@@ -23,7 +23,7 @@ export const RichText = ({
         '[&_h3]:mt-8 [&_h3]:text-base [&_h3]:text-ink',
         '[&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5',
         '[&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-5',
-        '[&_a]:text-ink [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-accent',
+        '[&_a]:text-ink [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-[color:var(--accent-text)]',
         '[&_strong]:font-semibold [&_strong]:text-ink',
         '[&_hr]:my-10 [&_hr]:border-line',
         '[&_blockquote]:border-l-2 [&_blockquote]:border-accent [&_blockquote]:pl-5 [&_blockquote]:italic',

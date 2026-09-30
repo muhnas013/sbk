@@ -20,7 +20,7 @@ export const PageHero = ({
 }) => {
   if (image) {
     return (
-      <section className="relative isolate flex min-h-[55vh] items-end overflow-hidden bg-ink text-paper">
+      <section className="tone-dark relative isolate flex min-h-[55vh] items-end overflow-hidden bg-ink text-paper">
         <MediaImage media={image} sizes="100vw" priority className="-z-10" />
         <div
           className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/75 to-ink/25"
@@ -29,7 +29,7 @@ export const PageHero = ({
         <Container className="py-16 lg:py-20">
           {breadcrumb && <Breadcrumb items={breadcrumb} className="mb-6 text-paper/70" />}
           {eyebrow && (
-            <p className="mb-4 text-xs font-medium uppercase tracking-[0.25em] text-accent">
+            <p className="mb-4 text-xs font-medium uppercase tracking-[0.25em] text-[color:var(--accent-text)]">
               {eyebrow}
             </p>
           )}

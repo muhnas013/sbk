@@ -84,7 +84,7 @@ const RenderBlock = async ({
   switch (block.blockType) {
     case 'hero':
       return (
-        <section className="relative isolate flex min-h-[60vh] items-end overflow-hidden bg-ink text-paper">
+        <section className="tone-dark relative isolate flex min-h-[60vh] items-end overflow-hidden bg-ink text-paper">
           {block.backgroundImage && (
             <>
               <MediaImage media={block.backgroundImage} sizes="100vw" priority className="-z-10" />
@@ -96,7 +96,7 @@ const RenderBlock = async ({
           )}
           <Container className="py-16 lg:py-24">
             {block.eyebrow && (
-              <p className="mb-4 text-xs font-medium uppercase tracking-[0.25em] text-accent">
+              <p className="mb-4 text-xs font-medium uppercase tracking-[0.25em] text-[color:var(--accent-text)]">
                 {block.eyebrow}
               </p>
             )}
@@ -346,7 +346,7 @@ const RenderBlock = async ({
                     className="flex h-full flex-col border border-line bg-paper p-6 transition-colors hover:border-ink"
                   >
                     <h3 className="font-heading text-sm font-bold leading-snug">{item.title}</h3>
-                    <span className="mt-4 text-xs text-accent">
+                    <span className="mt-4 text-xs text-[color:var(--accent-text)]">
                       {isProjects ? dict.common.viewDetail : dict.common.readMore}
                     </span>
                   </Link>

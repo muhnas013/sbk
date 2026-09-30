@@ -7,7 +7,7 @@ import type { Locale } from '@/lib/constants'
 import { localizedHref } from '@/lib/links'
 
 export const Hero = ({ data, locale }: { data: Homepage; locale: Locale }) => (
-  <section className="relative isolate flex min-h-[85vh] items-end overflow-hidden bg-ink text-paper">
+  <section className="tone-dark relative isolate flex min-h-[85vh] items-end overflow-hidden bg-ink text-paper">
     {data.heroImage && (
       <>
         <MediaImage media={data.heroImage} sizes="100vw" priority className="-z-10" />
@@ -22,7 +22,7 @@ export const Hero = ({ data, locale }: { data: Homepage; locale: Locale }) => (
     <Container className="py-20 lg:py-28">
       <div className="max-w-3xl">
         {data.heroEyebrow && (
-          <p className="mb-6 text-xs font-medium uppercase tracking-[0.25em] text-accent">
+          <p className="mb-6 text-xs font-medium uppercase tracking-[0.25em] text-[color:var(--accent-text)]">
             {data.heroEyebrow}
           </p>
         )}

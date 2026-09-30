@@ -12,8 +12,15 @@
   --color-stone: #6b6b6b;
   --color-stone-light: #9a9a9a;
   --color-line: #e4e1dc;
-  --color-accent: #b8873a;
-  --color-accent-dark: #8e6828;
+  /* Aksen dipilih agar lolos kontras WCAG AA pada SEMUA latar yang dipakai.
+     Patokan terketat adalah latar `paper-alt`, bukan `paper`:
+     - accent #8A6425 di atas paper-alt → 4,65:1
+     - accent #8A6425 di atas paper     → 5,08:1
+     - accent #8A6425 dengan teks putih → 5,34:1 (tombol)
+     - accent-light #D4A85C di atas ink → 8,5:1  (teks pada latar gelap) */
+  --color-accent: #8a6425;
+  --color-accent-dark: #6f5220;
+  --color-accent-light: #d4a85c;
   --color-accent-soft: #f5ecdc;
   --color-danger: #b3261e;
   --color-success: #3f7d58;
@@ -52,6 +59,12 @@
   ::before,
   ::after {
     border-color: var(--color-line);
+  }
+
+  /* Warna aksen untuk teks mengikuti terang/gelapnya latar section.
+     Section gelap menyetel ulang nilai ini lewat utilitas `tone-dark`. */
+  :root {
+    --accent-text: var(--color-accent);
   }
 
   html {
@@ -123,6 +136,11 @@
   @media (width >= 64rem) {
     padding-inline: 2.5rem;
   }
+}
+
+/* Dipasang pada section berlatar gelap agar teks aksen tetap terbaca. */
+@utility tone-dark {
+  --accent-text: var(--color-accent-light);
 }
 
 /* Tautan lewati navigasi untuk pengguna keyboard & pembaca layar. */

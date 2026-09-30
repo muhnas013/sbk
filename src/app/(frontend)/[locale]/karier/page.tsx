@@ -85,7 +85,7 @@ const CareersPage = async ({ params }: { params: Promise<{ locale: string }> }) 
                     className="group flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div>
-                      <h2 className="font-heading text-lg font-bold group-hover:text-accent">
+                      <h2 className="font-heading text-lg font-bold group-hover:text-[color:var(--accent-text)]">
                         {job.title}
                       </h2>
                       <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-stone">
@@ -109,7 +109,7 @@ const CareersPage = async ({ params }: { params: Promise<{ locale: string }> }) 
                     </div>
 
                     <ArrowUpRight
-                      className="h-5 w-5 shrink-0 text-accent transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      className="h-5 w-5 shrink-0 text-[color:var(--accent-text)] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                       aria-hidden="true"
                     />
                   </Link>

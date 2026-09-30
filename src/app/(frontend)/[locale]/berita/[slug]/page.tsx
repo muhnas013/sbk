@@ -7,13 +7,14 @@ import { MediaImage } from '@/components/media-image'
 import { PageHero } from '@/components/page-hero'
 import { RichText } from '@/components/rich-text'
 import { ShareButtons } from '@/components/share-buttons'
+import { ArticleSchema, BreadcrumbSchema } from '@/components/structured-data'
 import { getDictionary } from '@/i18n/dictionaries'
 import { isLocale } from '@/lib/constants'
-import { findPublished, findPublishedBySlug } from '@/lib/payload'
+import { findPublished, findPublishedBySlug, getGlobal } from '@/lib/payload'
 import { buildMetadata } from '@/lib/seo'
 import { isFuture } from '@/lib/time'
 import { formatDate } from '@/lib/utils'
-import type { Post, User } from '@/payload-types'
+import type { Media, Post, SiteSetting, User } from '@/payload-types'
 
 export const revalidate = 300
 
@@ -55,6 +56,8 @@ const NewsDetailPage = async ({ params }: Params) => {
   const categoryId = typeof post.category === 'object' ? post.category?.id : post.category
   const author = typeof post.author === 'object' ? (post.author as User) : null
 
+  const site = await getGlobal<SiteSetting>('site-settings', locale, 0)
+
   const related = await findPublished<Post>('posts', {
     locale,
     limit: 4,
@@ -63,19 +66,35 @@ const NewsDetailPage = async ({ params }: Params) => {
   })
 
   const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/${locale}/berita/${slug}`
+  const coverUrl =
+    typeof post.coverImage === 'object' ? ((post.coverImage as Media).url ?? null) : null
+
+  const breadcrumb = [
+    { label: dict.nav.home, href: `/${locale}` },
+    { label: dict.nav.news, href: `/${locale}/berita` },
+    { label: post.title },
+  ]
 
   return (
     <>
+      <ArticleSchema
+        title={post.title}
+        description={post.excerpt}
+        image={coverUrl}
+        publishedAt={post.publishedAt}
+        updatedAt={post.updatedAt}
+        authorName={author?.name}
+        url={url}
+        organizationName={site.companyName}
+      />
+      <BreadcrumbSchema items={breadcrumb} locale={locale} />
+
       <PageHero
         eyebrow={typeof post.category === 'object' ? post.category?.name : undefined}
         title={post.title}
         description={post.excerpt}
         image={post.coverImage}
-        breadcrumb={[
-          { label: dict.nav.home, href: `/${locale}` },
-          { label: dict.nav.news, href: `/${locale}/berita` },
-          { label: post.title },
-        ]}
+        breadcrumb={breadcrumb}
       />
 
       <Section spacing="lg">
@@ -124,7 +143,7 @@ const NewsDetailPage = async ({ params }: Params) => {
                         className="transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
-                    <h3 className="mt-4 font-heading text-sm font-bold leading-snug group-hover:text-accent">
+                    <h3 className="mt-4 font-heading text-sm font-bold leading-snug group-hover:text-[color:var(--accent-text)]">
                       {item.title}
                     </h3>
                   </Link>

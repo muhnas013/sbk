@@ -21,7 +21,10 @@ export const Heading = ({ as: Tag = 'h2', size = 'md', className, ...props }: He
 /** Label kecil di atas judul section — meniru pola "eyebrow" pada referensi desain. */
 export const Eyebrow = ({ className, ...props }: ComponentProps<'p'>) => (
   <p
-    className={cn('text-xs font-medium uppercase tracking-[0.2em] text-accent mb-4', className)}
+    className={cn(
+      'text-xs font-medium uppercase tracking-[0.2em] text-[color:var(--accent-text)] mb-4',
+      className,
+    )}
     {...props}
   />
 )

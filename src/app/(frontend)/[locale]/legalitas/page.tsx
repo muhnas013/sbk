@@ -76,7 +76,10 @@ const LegalPage = async ({ params }: { params: Promise<{ locale: string }> }) =>
                     )}
 
                     <div className="flex flex-1 flex-col p-6">
-                      <ShieldCheck className="h-5 w-5 text-accent" aria-hidden="true" />
+                      <ShieldCheck
+                        className="h-5 w-5 text-[color:var(--accent-text)]"
+                        aria-hidden="true"
+                      />
                       <h2 className="mt-4 font-heading text-base font-bold leading-snug">
                         {cert.name}
                       </h2>

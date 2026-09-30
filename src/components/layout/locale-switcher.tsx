@@ -23,15 +23,18 @@ export const LocaleSwitcher = ({ current, className }: { current: Locale; classN
           href={pathFor(locale)}
           hrefLang={locale}
           aria-current={locale === current ? 'true' : undefined}
-          aria-label={LOCALE_LABELS[locale]}
           className={cn(
-            'px-2 py-1 text-xs font-medium transition-colors',
+            // Tinggi 44px memenuhi anjuran ukuran target sentuh.
+            'inline-flex h-11 min-w-11 items-center justify-center px-2 text-xs font-medium transition-colors',
             locale === current
               ? 'text-ink underline underline-offset-4'
               : 'text-stone hover:text-ink',
           )}
         >
           {LOCALE_SHORT[locale]}
+          {/* Nama aksesibel diawali teks yang terlihat, lalu diperjelas —
+              syarat aturan "label content name mismatch". */}
+          <span className="sr-only"> — {LOCALE_LABELS[locale]}</span>
         </Link>
       ))}
     </div>

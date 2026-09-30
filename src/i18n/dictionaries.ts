@@ -24,6 +24,7 @@ const id = {
   },
   common: {
     readMore: 'Selengkapnya',
+    aboutCta: 'Selengkapnya tentang perusahaan',
     viewAll: 'Lihat Semua',
     viewDetail: 'Lihat Detail',
     backTo: 'Kembali ke',
@@ -105,6 +106,7 @@ const en: Dictionary = {
   },
   common: {
     readMore: 'Read More',
+    aboutCta: 'Learn more about the company',
     viewAll: 'View All',
     viewDetail: 'View Detail',
     backTo: 'Back to',

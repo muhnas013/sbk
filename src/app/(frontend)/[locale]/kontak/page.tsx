@@ -73,13 +73,16 @@ const ContactPage = async ({ params }: { params: Promise<{ locale: string }> }) 
             <ul className="mt-8 space-y-6">
               {details.map((detail) => (
                 <li key={detail.label} className="flex gap-4">
-                  <detail.icon className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+                  <detail.icon
+                    className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--accent-text)]"
+                    aria-hidden="true"
+                  />
                   <div>
                     <p className="text-xs uppercase tracking-wider text-stone">{detail.label}</p>
                     {detail.href ? (
                       <a
                         href={detail.href}
-                        className="mt-1 block text-sm text-ink hover:text-accent"
+                        className="mt-1 block text-sm text-ink hover:text-[color:var(--accent-text)]"
                       >
                         {detail.value}
                       </a>

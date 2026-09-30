@@ -99,7 +99,7 @@ const DivisionPage = async ({ params }: Params) => {
                       </p>
                     )}
                     <ArrowUpRight
-                      className="mt-6 h-4 w-4 text-accent transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      className="mt-6 h-4 w-4 text-[color:var(--accent-text)] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                       aria-hidden="true"
                     />
                   </Link>

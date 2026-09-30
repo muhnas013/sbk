@@ -25,7 +25,7 @@ export const Testimonials = ({
         <ul className="mt-12 grid gap-6 lg:grid-cols-3">
           {testimonials.map((item) => (
             <li key={item.id} className="flex flex-col border border-line bg-paper p-8">
-              <Quote className="h-6 w-6 text-accent" aria-hidden="true" />
+              <Quote className="h-6 w-6 text-[color:var(--accent-text)]" aria-hidden="true" />
               <blockquote className="mt-5 flex-1 text-sm leading-relaxed text-stone">
                 “{item.quote}”
               </blockquote>

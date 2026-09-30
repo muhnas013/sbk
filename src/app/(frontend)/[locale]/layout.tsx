@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation'
 import { Footer, type FooterColumn } from '@/components/layout/footer'
 import { Header, type NavItem } from '@/components/layout/header'
 import { WhatsAppButton } from '@/components/layout/whatsapp-button'
+import { CookieConsent } from '@/components/cookie-consent'
+import { OrganizationSchema } from '@/components/structured-data'
 import { getDictionary } from '@/i18n/dictionaries'
 import { isLocale, LOCALES } from '@/lib/constants'
 import { localizedHref } from '@/lib/links'
@@ -64,6 +66,8 @@ const LocaleLayout = async ({
 
   return (
     <>
+      <OrganizationSchema site={site} locale={locale} />
+
       <a href="#main" className="skip-link">
         {dict.nav.skipToContent}
       </a>
@@ -89,6 +93,8 @@ const LocaleLayout = async ({
         }}
         legalNote={site.footerLegalNote}
       />
+
+      <CookieConsent locale={locale} analyticsId={site.googleAnalyticsId} />
 
       <WhatsAppButton
         phone={site.whatsapp}

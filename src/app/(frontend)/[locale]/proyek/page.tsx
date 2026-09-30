@@ -120,6 +120,10 @@ const ProjectsPage = async ({ params, searchParams }: Params) => {
 
       <Section spacing="md">
         <Container>
+          {/* Heading tingkat dua menjaga urutan heading tetap berurutan
+              antara h1 di kepala halaman dan h3 pada kartu proyek. */}
+          <h2 className="sr-only">{locale === 'id' ? 'Daftar proyek' : 'Project list'}</h2>
+
           <ProjectFilters
             dict={dict}
             divisions={divisions.docs.map((item) => ({ label: item.name, value: item.slug ?? '' }))}

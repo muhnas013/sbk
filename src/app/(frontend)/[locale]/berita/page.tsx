@@ -132,7 +132,7 @@ const NewsPage = async ({ params, searchParams }: Params) => {
                         {formatDate(post.publishedAt, locale)}
                       </time>
                     )}
-                    <h2 className="mt-2 font-heading text-base font-bold leading-snug group-hover:text-accent">
+                    <h2 className="mt-2 font-heading text-base font-bold leading-snug group-hover:text-[color:var(--accent-text)]">
                       {post.title}
                     </h2>
                     {post.excerpt && (

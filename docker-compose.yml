@@ -42,6 +42,7 @@ services:
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
       NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID:-}
       ADMIN_IP_ALLOWLIST: ${ADMIN_IP_ALLOWLIST:-}
+      APPLICATION_RETENTION_MONTHS: ${APPLICATION_RETENTION_MONTHS:-12}
     volumes:
       - media:/app/media
     networks: [internal, web]

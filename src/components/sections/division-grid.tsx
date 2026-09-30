@@ -54,7 +54,7 @@ export const DivisionGrid = ({
                 </div>
 
                 <div className="flex flex-1 flex-col p-6">
-                  <Icon className="h-6 w-6 text-accent" aria-hidden="true" />
+                  <Icon className="h-6 w-6 text-[color:var(--accent-text)]" aria-hidden="true" />
                   <h3 className="mt-4 font-heading text-base font-bold leading-snug">
                     {division.name}
                   </h3>

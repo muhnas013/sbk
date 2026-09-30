@@ -7,6 +7,7 @@ import { GalleryLightbox, type GalleryItem } from '@/components/gallery-lightbox
 import { PageHero } from '@/components/page-hero'
 import { ProjectCard } from '@/components/project-card'
 import { RichText } from '@/components/rich-text'
+import { BreadcrumbSchema } from '@/components/structured-data'
 import { getDictionary } from '@/i18n/dictionaries'
 import { isLocale } from '@/lib/constants'
 import { findPublished, findPublishedBySlug } from '@/lib/payload'
@@ -94,18 +95,22 @@ const ProjectDetailPage = async ({ params }: Params) => {
     })
     .filter((item): item is GalleryItem => item !== null)
 
+  const breadcrumb = [
+    { label: dict.nav.home, href: `/${locale}` },
+    { label: dict.nav.projects, href: `/${locale}/proyek` },
+    { label: project.title },
+  ]
+
   return (
     <>
+      <BreadcrumbSchema items={breadcrumb} locale={locale} />
+
       <PageHero
         eyebrow={divisionName}
         title={project.title}
         description={project.summary}
         image={project.coverImage}
-        breadcrumb={[
-          { label: dict.nav.home, href: `/${locale}` },
-          { label: dict.nav.projects, href: `/${locale}/proyek` },
-          { label: project.title },
-        ]}
+        breadcrumb={breadcrumb}
       />
 
       <Section spacing="lg">

@@ -17,7 +17,7 @@ export const ClientLogos = ({ clients, dict }: { clients: Client[]; dict: Dictio
               <MediaImage
                 media={client.logo}
                 alt={client.name}
-                sizes="(min-width: 1024px) 20vw, 33vw"
+                sizes="(min-width: 1024px) 240px, 50vw"
                 className="object-contain opacity-60 transition-opacity hover:opacity-100"
               />
             </li>

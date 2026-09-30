@@ -12,10 +12,10 @@ const buttonVariants = cva(
         secondary: 'bg-transparent text-ink border border-ink hover:bg-ink hover:text-paper',
         accent: 'bg-accent text-white hover:bg-accent-dark',
         ghost: 'bg-transparent text-ink hover:bg-paper-alt',
-        link: 'bg-transparent text-ink underline underline-offset-4 hover:text-accent p-0 h-auto',
+        link: 'bg-transparent text-ink underline underline-offset-4 hover:text-[color:var(--accent-text)] p-0 h-auto',
       },
       size: {
-        sm: 'h-10 px-4 text-xs',
+        sm: 'h-11 px-5 text-xs',
         md: 'h-12 px-6 text-xs',
         lg: 'h-14 px-8 text-sm',
       },

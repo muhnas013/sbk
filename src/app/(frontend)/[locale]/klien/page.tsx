@@ -82,7 +82,7 @@ const ClientsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
                       <MediaImage
                         media={client.logo}
                         alt={client.name}
-                        sizes="(min-width: 1024px) 20vw, 33vw"
+                        sizes="(min-width: 1024px) 240px, 50vw"
                         className="object-contain p-2"
                       />
                       <span className="sr-only">{client.name}</span>

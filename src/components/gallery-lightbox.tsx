@@ -110,7 +110,7 @@ export const GalleryLightbox = ({
               type="button"
               onClick={close}
               aria-label={closeLabel}
-              className="flex h-11 w-11 items-center justify-center text-paper hover:text-accent"
+              className="flex h-11 w-11 items-center justify-center text-paper hover:text-[color:var(--accent-text)]"
             >
               <X className="h-6 w-6" aria-hidden="true" />
             </button>
@@ -132,7 +132,7 @@ export const GalleryLightbox = ({
               type="button"
               onClick={() => step(-1)}
               aria-label="Foto sebelumnya"
-              className="flex h-11 w-11 items-center justify-center text-paper hover:text-accent"
+              className="flex h-11 w-11 items-center justify-center text-paper hover:text-[color:var(--accent-text)]"
             >
               <ChevronLeft className="h-6 w-6" aria-hidden="true" />
             </button>
@@ -148,7 +148,7 @@ export const GalleryLightbox = ({
               type="button"
               onClick={() => step(1)}
               aria-label="Foto berikutnya"
-              className="flex h-11 w-11 items-center justify-center text-paper hover:text-accent"
+              className="flex h-11 w-11 items-center justify-center text-paper hover:text-[color:var(--accent-text)]"
             >
               <ChevronRight className="h-6 w-6" aria-hidden="true" />
             </button>

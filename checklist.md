@@ -4,13 +4,13 @@
 > Tandai `[x]` bila selesai. Item bertanda 🔴 adalah _blocker_ — menahan pekerjaan lain.
 > Item bertanda 👤 menunggu input dari pihak perusahaan, bukan developer.
 
-**Progres keseluruhan:** 211 / 274 item
+**Progres keseluruhan:** 212 / 273 item
 
 | Fase                    | Status         | Progres |
 | ----------------------- | -------------- | ------- |
 | 0. Pra-Pengerjaan       | ⬜ Belum mulai | 0/14    |
 | 1. Fondasi              | 🟡 Berjalan    | 35/39   |
-| 2. Model Konten & Admin | 🟡 Berjalan    | 59/62   |
+| 2. Model Konten & Admin | 🟡 Berjalan    | 60/61   |
 | 3. Halaman Inti         | 🟡 Berjalan    | 43/44   |
 | 4. Modul Tambahan       | 🟡 Berjalan    | 28/30   |
 | 5. Kualitas & Hardening | 🟡 Berjalan    | 44/49   |
@@ -172,16 +172,15 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 - [x] Audit log perubahan konten (siapa, apa, kapan) — otomatis untuk seluruh koleksi
 - [x] Validasi tipe & ukuran berkas pada seluruh unggahan, dengan pesan galat berbahasa Indonesia
 - [x] Proteksi CSRF aktif — permintaan tulis berbasis cookie tanpa Origin yang sah ditolak
-- [x] Pembatasan akses `/admin` per daftar IP (`ADMIN_IP_ALLOWLIST`, mendukung IP tunggal & CIDR)
-- [ ] 👤 **2FA (TOTP) — butuh keputusan Anda.** Payload 3.90 tidak menyediakan 2FA bawaan dan
-      tidak punya titik ekstensi untuk menambah field pada form login. Menerapkannya berarti
-      mengganti seluruh halaman login dengan komponen sendiri. Membangun separuh jalan justru
-      berbahaya: admin yang mengaktifkan 2FA akan terkunci dari panel. Opsi di §12 laporan.
+- [x] **Keputusan (30 Sep 2026): 2FA tidak dipakai.** Panel memakai login email + kata sandi
+      biasa. Pembatasan IP juga tidak dipakai dan kodenya dihapus — dapat dipulihkan dari
+      commit `a27f053` bila suatu saat dibutuhkan. Pengaman yang berlaku: kata sandi 12
+      karakter, penguncian akun 5×/15 menit, sesi 8 jam, dan notifikasi login perangkat baru.
 - [x] Notifikasi email saat login dari perangkat/IP baru — sidik jari perangkat disimpan
       sebagai hash, bukan IP/user agent mentah; login pertama sebuah akun tidak memicu notifikasi
-- [ ] 👤 **Keputusan diperlukan:** PRD meminta argon2id. Payload 3.90 memakai PBKDF2-SHA256 600.000 iterasi
-      (sesuai rekomendasi OWASP terkini). Mengganti ke argon2id berarti menambal internal framework
-      dan menanggung risiko saat upgrade. Rekomendasi: tetap pakai bawaan Payload.
+- [x] **Keputusan (30 Sep 2026): hashing memakai bawaan Payload** — PBKDF2-SHA256 dengan
+      600.000 iterasi, sesuai rekomendasi OWASP terkini. PRD semula menyebut argon2id;
+      menggantinya berarti menambal internal framework dan menanggung risiko tiap upgrade.
 
 ### 2.6 Dashboard & Data Awal
 
@@ -377,8 +376,8 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
       fail2ban, pembaruan keamanan otomatis
 - [ ] Jalankan `scripts/vps-setup.sh` di VPS — menunggu akses VPS
 
-> Catatan: PBKDF2-SHA256 600.000 iterasi dari Payload dipertahankan, bukan argon2id —
-> lihat keputusan terbuka di §2.5.
+> Catatan: hashing memakai PBKDF2-SHA256 600.000 iterasi bawaan Payload — keputusan
+> tercatat di §2.5.
 
 ### 5.4 Aksesibilitas
 
@@ -468,6 +467,7 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 
 ## Riwayat Revisi
 
-| Tanggal     | Perubahan                                       |
-| ----------- | ----------------------------------------------- |
-| 30 Sep 2026 | Checklist awal dibuat berdasarkan `prd.md` v1.0 |
+| Tanggal     | Perubahan                                                              |
+| ----------- | ---------------------------------------------------------------------- |
+| 30 Sep 2026 | Checklist awal dibuat berdasarkan `prd.md` v1.0                        |
+| 30 Sep 2026 | Fase 1–5 dikerjakan; keputusan 2FA, pembatasan IP, dan hashing dicatat |

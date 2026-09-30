@@ -231,30 +231,7 @@ Masa retensi diatur lewat `APPLICATION_RETENTION_MONTHS` (bawaan 12 bulan).
 
 ---
 
-## 9. Membatasi Akses Panel Admin per IP
-
-Isi `ADMIN_IP_ALLOWLIST` pada `.env` dengan daftar IP kantor, dipisah koma.
-Mendukung alamat tunggal maupun rentang CIDR:
-
-```
-ADMIN_IP_ALLOWLIST=203.0.113.7,10.99.99.0/24
-```
-
-Permintaan ke `/admin` dari luar daftar dibalas 403 sebelum halaman login
-dirender. Situs publik tidak terpengaruh.
-
-Kosongkan bila akses panel perlu terbuka dari mana saja — mis. ketika admin
-bekerja dari lapangan. Ingat bahwa 2FA belum tersedia (lihat catatan di
-`checklist.md` §2.5), sehingga daftar IP adalah lapisan pengaman kedua yang
-paling kuat saat ini.
-
-> Pembatasan ini membaca header `X-Forwarded-For` dari Caddy. Jangan
-> mengekspos port 3000 aplikasi langsung ke internet — header itu bisa
-> dipalsukan bila permintaan tidak melewati reverse proxy.
-
----
-
-## 10. Catatan Keamanan
+## 9. Catatan Keamanan
 
 - `PAYLOAD_SECRET` mengunci seluruh token sesi. Menggantinya akan
   **mengeluarkan semua pengguna** dari panel admin. Jangan diganti tanpa alasan.
@@ -265,10 +242,16 @@ paling kuat saat ini.
   mesin pencari.
 - Kredensial (VPS, database, SMTP, analytics) diserahkan lewat kanal aman,
   bukan email biasa atau chat.
+- Panel admin memakai login email + kata sandi biasa, tanpa 2FA dan tanpa
+  pembatasan IP. Lapisan pengaman yang berlaku: kata sandi minimal 12 karakter
+  dengan campuran huruf besar/kecil dan angka, penguncian akun setelah 5
+  percobaan gagal selama 15 menit, sesi 8 jam, dan notifikasi email saat akun
+  dipakai dari perangkat baru. Perlakukan kredensial panel sebagaimana
+  kredensial perbankan: satu akun satu orang, jangan dibagikan.
 
 ---
 
-## 11. Pengembangan Lokal
+## 10. Pengembangan Lokal
 
 Lihat [`README.md`](../README.md) untuk penyiapan lingkungan pengembangan,
 daftar perintah, dan struktur folder.

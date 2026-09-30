@@ -4,9 +4,9 @@
 | ----------- | --------------------------------------------------- |
 | **Dokumen** | Product Requirements Document (PRD)                 |
 | **Produk**  | Website Company Profile + Content Management System |
-| **Versi**   | 1.0 (Draft)                                         |
+| **Versi**   | 1.1                                                 |
 | **Tanggal** | 30 September 2026                                   |
-| **Status**  | Menunggu persetujuan                                |
+| **Status**  | Disetujui — dalam pengerjaan                        |
 
 ---
 
@@ -206,13 +206,21 @@ Akses melalui `/admin`. Dibangun di atas **Payload CMS 3**, berjalan dalam aplik
 
 ### 6.4 Keamanan Panel Admin
 
-- Password di-hash (argon2id), kebijakan minimal 12 karakter
-- **2FA (TOTP)** wajib untuk peran Super Admin & Admin
-- Rate limiting pada endpoint login (maks 5 percobaan / 15 menit per IP)
-- Session token httpOnly + SameSite=Strict, kedaluwarsa 8 jam, logout otomatis saat idle 30 menit
-- Opsional: batasi akses `/admin` ke daftar IP kantor
-- Notifikasi email saat login dari perangkat/IP baru
-- Validasi tipe & ukuran berkas pada semua unggahan; berkas disimpan di luar web root dan disajikan melalui route terkontrol
+> **Revisi 30 September 2026.** Tiga butir di bagian ini diputuskan berbeda dari draf awal
+> setelah dibahas bersama pemilik proyek. Perubahan dan alasannya dicatat di bawah.
+
+- Password di-hash dengan **PBKDF2-SHA256, 600.000 iterasi** (bawaan Payload, sesuai
+  rekomendasi OWASP terkini). _Draf awal menyebut argon2id; menggantinya berarti menambal
+  internal framework dan menanggung risiko regresi pada tiap upgrade Payload._
+- Kebijakan kata sandi: minimal 12 karakter, wajib memuat huruf besar, huruf kecil, dan angka
+- **2FA tidak dipakai.** Panel memakai login email + kata sandi biasa. _Payload 3.90 tidak
+  menyediakan 2FA bawaan maupun titik ekstensi untuk menambah field pada form login-nya;
+  menerapkannya menuntut penggantian seluruh halaman login._
+- **Pembatasan IP tidak dipakai** — panel dapat diakses dari jaringan mana pun
+- Rate limiting pada endpoint login (maks 5 percobaan gagal → akun terkunci 15 menit)
+- Session token httpOnly + SameSite=Strict, kedaluwarsa 8 jam
+- Notifikasi email saat login dari perangkat baru
+- Validasi tipe & ukuran berkas pada semua unggahan; berkas disajikan melalui route terkontrol
 
 ---
 
@@ -443,7 +451,7 @@ Mengadaptasi gaya referensi: bersih, lapang, fotografi-sentris, tipografi tegas,
 | AC-4  | Form kontak & lamaran tersimpan di admin **dan** mengirim notifikasi email                     | Uji end-to-end               |
 | AC-5  | Lighthouse mobile ≥ 90 pada keempat kategori di beranda, daftar proyek, dan detail proyek      | Lighthouse CI                |
 | AC-6  | Tidak ada temuan "High"/"Critical" pada `npm audit` dan securityheaders.com meraih peringkat A | Pemindaian otomatis          |
-| AC-7  | 2FA aktif dan wajib untuk Super Admin & Admin                                                  | Uji manual                   |
+| AC-7  | Kebijakan kata sandi & penguncian akun berfungsi; notifikasi login perangkat baru terkirim     | Uji manual                   |
 | AC-8  | Backup harian berjalan dan pernah diuji restore ke staging                                     | Bukti log + uji restore      |
 | AC-9  | `sitemap.xml` memuat seluruh URL publik dan sudah terdaftar di Search Console                  | Inspeksi manual              |
 | AC-10 | Unggahan berkas menolak tipe & ukuran yang tidak diizinkan                                     | Uji negatif                  |
@@ -478,4 +486,11 @@ Mengadaptasi gaya referensi: bersih, lapang, fotografi-sentris, tipografi tegas,
 
 ---
 
-_Dokumen ini adalah draf untuk didiskusikan. Perubahan lingkup setelah persetujuan akan dicatat pada riwayat revisi._
+## 15. Riwayat Revisi
+
+| Versi | Tanggal     | Perubahan                                                                                                                                                                                                                        |
+| ----- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0   | 30 Sep 2026 | Draf awal                                                                                                                                                                                                                        |
+| 1.1   | 30 Sep 2026 | §6.4 direvisi: hashing memakai PBKDF2-SHA256 600.000 iterasi bawaan Payload (bukan argon2id); 2FA tidak dipakai; pembatasan IP tidak dipakai. AC-7 disesuaikan. Stack memakai Next.js 16 karena Payload 3.90 sudah mendukungnya. |
+
+_Perubahan lingkup berikutnya dicatat pada tabel di atas._

@@ -1,0 +1,51 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ke VPS
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Siapkan kunci SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p "${{ secrets.SSH_PORT || 22 }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Tarik perubahan & bangun ulang container
+        run: |
+          ssh -p "${{ secrets.SSH_PORT || 22 }}" \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "set -e
+             cd ${{ secrets.DEPLOY_PATH }}
+             git fetch --all
+             git reset --hard origin/main
+             docker compose build app
+             docker compose up -d --no-deps app
+             docker image prune -f"
+
+      - name: Verifikasi health check
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS "https://${{ secrets.SITE_DOMAIN }}/health" > /dev/null; then
+              echo "Deploy sehat."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Health check gagal setelah 5 menit." >&2
+          exit 1

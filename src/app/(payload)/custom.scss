@@ -1,0 +1,15 @@
+/* Penyesuaian tampilan panel admin agar selaras dengan identitas perusahaan. */
+:root {
+  --theme-elevation-0: #ffffff;
+  --color-base-800: #141414;
+}
+
+.template-default__wrap,
+.template-minimal {
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+/* Turunkan intensitas warna aksen bawaan Payload ke aksen perusahaan. */
+[data-theme='light'] {
+  --theme-success-500: #3f7d58;
+}

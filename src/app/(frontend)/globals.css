@@ -1,0 +1,142 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Design token — acuan prd.md §10
+   --------------------------------------------------------------------------- */
+@theme {
+  /* Warna */
+  --color-ink: #141414;
+  --color-ink-soft: #2a2a2a;
+  --color-paper: #faf9f7;
+  --color-paper-alt: #f2f0ec;
+  --color-stone: #6b6b6b;
+  --color-stone-light: #9a9a9a;
+  --color-line: #e4e1dc;
+  --color-accent: #b8873a;
+  --color-accent-dark: #8e6828;
+  --color-accent-soft: #f5ecdc;
+  --color-danger: #b3261e;
+  --color-success: #3f7d58;
+
+  /* Tipografi — skala prd.md §10.3 */
+  --font-heading: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --text-xs: 0.875rem; /* 14 */
+  --text-sm: 1rem; /* 16 */
+  --text-base: 1.125rem; /* 18 */
+  --text-lg: 1.5rem; /* 24 */
+  --text-xl: 2rem; /* 32 */
+  --text-2xl: 2.75rem; /* 44 */
+  --text-3xl: 3.75rem; /* 60 */
+  --text-4xl: 5rem; /* 80 */
+
+  /* Sudut border tegas, sesuai karakter konstruksi */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
+
+  /* Lebar konten */
+  --container-content: 80rem; /* 1280px */
+
+  /* Transisi */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   Dasar
+   --------------------------------------------------------------------------- */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Focus ring yang jelas — syarat WCAG 2.1 AA (prd.md §8.4). */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Hormati preferensi pengguna yang sensitif terhadap animasi. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  ::selection {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Utilitas proyek
+   --------------------------------------------------------------------------- */
+@utility container-content {
+  width: 100%;
+  max-width: var(--container-content);
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+
+  @media (width >= 64rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Tautan lewati navigasi untuk pengguna keyboard & pembaca layar. */
+@utility skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100%;
+  z-index: 100;
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+  padding: 0.75rem 1.25rem;
+  transition: top 150ms var(--ease-out-quart);
+
+  &:focus {
+    top: 1rem;
+  }
+}

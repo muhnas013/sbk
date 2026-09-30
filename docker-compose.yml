@@ -1,0 +1,98 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sbk}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD wajib diisi}
+      POSTGRES_DB: ${POSTGRES_DB:-sbk}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-sbk} -d ${POSTGRES_DB:-sbk}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Database tidak diekspos ke internet; hanya dijangkau lewat jaringan internal.
+    networks: [internal]
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URI: postgres://${POSTGRES_USER:-sbk}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-sbk}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?PAYLOAD_SECRET wajib diisi}
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?NEXT_PUBLIC_SERVER_URL wajib diisi}
+      PAYLOAD_MEDIA_DIR: /app/media
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-PT Sabhumi Karya Barito}
+      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-}
+      EMAIL_TO_CONTACT: ${EMAIL_TO_CONTACT:-}
+      EMAIL_TO_HR: ${EMAIL_TO_HR:-}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+      NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID:-}
+      ADMIN_IP_ALLOWLIST: ${ADMIN_IP_ALLOWLIST:-}
+    volumes:
+      - media:/app/media
+    networks: [internal, web]
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on: [app]
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?SITE_DOMAIN wajib diisi}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [web]
+
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER:-sbk}
+      POSTGRES_DB: ${POSTGRES_DB:-sbk}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-30}
+    volumes:
+      - ./scripts/backup.sh:/usr/local/bin/backup.sh:ro
+      - media:/data/media:ro
+      - ./backup:/backup
+    entrypoint:
+      [
+        '/bin/sh',
+        '-c',
+        'chmod +x /usr/local/bin/backup.sh; while true; do sleep 86400; /usr/local/bin/backup.sh; done',
+      ]
+    networks: [internal]
+
+volumes:
+  pgdata:
+  media:
+  caddy_data:
+  caddy_config:
+
+networks:
+  internal:
+    internal: true
+  web:

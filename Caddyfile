@@ -1,0 +1,43 @@
+{
+	email {$ACME_EMAIL}
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+{$SITE_DOMAIN} {
+	encode zstd gzip
+
+	# --- Security headers (prd.md §8.3) ---
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+		Cross-Origin-Opener-Policy "same-origin"
+		-Server
+		-X-Powered-By
+	}
+
+	# Aset statis Next.js sudah ber-hash pada nama berkasnya, aman di-cache permanen.
+	@nextStatic path /_next/static/*
+	header @nextStatic Cache-Control "public, max-age=31536000, immutable"
+
+	@media path /media/*
+	header @media Cache-Control "public, max-age=2592000"
+
+	@fonts path *.woff2 *.woff
+	header @fonts Cache-Control "public, max-age=31536000, immutable"
+
+	reverse_proxy app:3000 {
+		health_uri /health
+		health_interval 30s
+		health_timeout 5s
+	}
+}
+
+# Arahkan www ke domain utama agar tidak ada konten ganda di mesin pencari.
+www.{$SITE_DOMAIN} {
+	redir https://{$SITE_DOMAIN}{uri} permanent
+}

@@ -1,0 +1,164 @@
+import type { Locale } from '@/lib/constants'
+
+/**
+ * String antarmuka statis (tombol, label, pesan). Konten yang dikelola admin
+ * tidak ada di sini — itu di-localize oleh Payload.
+ */
+const id = {
+  nav: {
+    home: 'Beranda',
+    about: 'Tentang Kami',
+    services: 'Layanan',
+    divisions: 'Divisi Usaha',
+    projects: 'Proyek',
+    legal: 'Legalitas',
+    clients: 'Klien & Mitra',
+    news: 'Berita',
+    careers: 'Karier',
+    downloads: 'Unduhan',
+    contact: 'Kontak',
+    menu: 'Menu',
+    close: 'Tutup',
+    openMenu: 'Buka menu navigasi',
+    skipToContent: 'Lewati ke konten utama',
+  },
+  common: {
+    readMore: 'Selengkapnya',
+    viewAll: 'Lihat Semua',
+    viewDetail: 'Lihat Detail',
+    backTo: 'Kembali ke',
+    loading: 'Memuat…',
+    search: 'Cari',
+    filter: 'Filter',
+    reset: 'Atur Ulang',
+    noResults: 'Tidak ada data yang cocok.',
+    required: 'Wajib diisi',
+    send: 'Kirim',
+    sending: 'Mengirim…',
+    download: 'Unduh',
+    consultation: 'Konsultasi Gratis',
+    whatsapp: 'Hubungi via WhatsApp',
+    language: 'Bahasa',
+  },
+  project: {
+    client: 'Pemberi Kerja',
+    location: 'Lokasi',
+    year: 'Tahun',
+    value: 'Nilai Kontrak',
+    duration: 'Durasi',
+    status: 'Status',
+    scope: 'Lingkup Pekerjaan',
+    related: 'Proyek Terkait',
+    statusCompleted: 'Selesai',
+    statusOngoing: 'Berjalan',
+    statusPlanned: 'Direncanakan',
+  },
+  form: {
+    name: 'Nama Lengkap',
+    email: 'Email',
+    phone: 'Nomor Telepon',
+    company: 'Perusahaan / Instansi',
+    subject: 'Subjek',
+    division: 'Divisi yang Dituju',
+    message: 'Pesan',
+    cv: 'Unggah CV',
+    coverLetter: 'Surat Lamaran',
+    consent: 'Saya menyetujui data pribadi saya diproses sesuai Kebijakan Privasi perusahaan.',
+    successTitle: 'Pesan terkirim',
+    successBody: 'Terima kasih. Tim kami akan menghubungi Anda sesegera mungkin.',
+    errorTitle: 'Gagal mengirim',
+    errorBody: 'Terjadi kendala. Silakan coba lagi atau hubungi kami melalui WhatsApp.',
+  },
+  error: {
+    notFoundTitle: 'Halaman tidak ditemukan',
+    notFoundBody: 'Halaman yang Anda cari tidak tersedia atau sudah dipindahkan.',
+    serverTitle: 'Terjadi kesalahan',
+    serverBody: 'Sistem sedang bermasalah. Silakan coba beberapa saat lagi.',
+    backHome: 'Kembali ke Beranda',
+  },
+} as const
+
+/** Bentuk kamus diturunkan dari versi Indonesia agar tidak ada kunci yang terlewat. */
+export type Dictionary = {
+  [Section in keyof typeof id]: {
+    [Key in keyof (typeof id)[Section]]: string
+  }
+}
+
+const en: Dictionary = {
+  nav: {
+    home: 'Home',
+    about: 'About Us',
+    services: 'Services',
+    divisions: 'Business Divisions',
+    projects: 'Projects',
+    legal: 'Legal & Certifications',
+    clients: 'Clients & Partners',
+    news: 'News',
+    careers: 'Careers',
+    downloads: 'Downloads',
+    contact: 'Contact',
+    menu: 'Menu',
+    close: 'Close',
+    openMenu: 'Open navigation menu',
+    skipToContent: 'Skip to main content',
+  },
+  common: {
+    readMore: 'Read More',
+    viewAll: 'View All',
+    viewDetail: 'View Detail',
+    backTo: 'Back to',
+    loading: 'Loading…',
+    search: 'Search',
+    filter: 'Filter',
+    reset: 'Reset',
+    noResults: 'No matching results.',
+    required: 'Required',
+    send: 'Send',
+    sending: 'Sending…',
+    download: 'Download',
+    consultation: 'Free Consultation',
+    whatsapp: 'Chat on WhatsApp',
+    language: 'Language',
+  },
+  project: {
+    client: 'Client',
+    location: 'Location',
+    year: 'Year',
+    value: 'Contract Value',
+    duration: 'Duration',
+    status: 'Status',
+    scope: 'Scope of Work',
+    related: 'Related Projects',
+    statusCompleted: 'Completed',
+    statusOngoing: 'Ongoing',
+    statusPlanned: 'Planned',
+  },
+  form: {
+    name: 'Full Name',
+    email: 'Email',
+    phone: 'Phone Number',
+    company: 'Company / Institution',
+    subject: 'Subject',
+    division: 'Related Division',
+    message: 'Message',
+    cv: 'Upload CV',
+    coverLetter: 'Cover Letter',
+    consent: 'I agree to the processing of my personal data per the Privacy Policy.',
+    successTitle: 'Message sent',
+    successBody: 'Thank you. Our team will get back to you shortly.',
+    errorTitle: 'Failed to send',
+    errorBody: 'Something went wrong. Please try again or reach us on WhatsApp.',
+  },
+  error: {
+    notFoundTitle: 'Page not found',
+    notFoundBody: 'The page you are looking for is unavailable or has been moved.',
+    serverTitle: 'Something went wrong',
+    serverBody: 'The system is having trouble. Please try again in a moment.',
+    backHome: 'Back to Home',
+  },
+}
+
+const dictionaries: Record<Locale, Dictionary> = { id, en }
+
+export const getDictionary = (locale: Locale): Dictionary => dictionaries[locale]

@@ -2,22 +2,54 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { en } from '@payloadcms/translations/languages/en'
+import { id } from '@payloadcms/translations/languages/id'
+import { redirectsPlugin } from '@payloadcms/plugin-redirects'
+import { seoPlugin } from '@payloadcms/plugin-seo'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 
+import { adminOnly } from '@/access'
+import { ActivityLogs } from '@/collections/ActivityLogs'
+import { Certifications } from '@/collections/Certifications'
+import { Clients } from '@/collections/Clients'
+import { ContactSubmissions } from '@/collections/ContactSubmissions'
+import { Divisions } from '@/collections/Divisions'
+import { Documents } from '@/collections/Documents'
+import { JobApplications } from '@/collections/JobApplications'
+import { Jobs } from '@/collections/Jobs'
 import { Media } from '@/collections/Media'
+import { Pages } from '@/collections/Pages'
+import { PostCategories } from '@/collections/PostCategories'
+import { Posts } from '@/collections/Posts'
+import { ProjectCategories } from '@/collections/ProjectCategories'
+import { Projects } from '@/collections/Projects'
+import { Services } from '@/collections/Services'
+import { Team } from '@/collections/Team'
+import { Testimonials } from '@/collections/Testimonials'
 import { Users } from '@/collections/Users'
+import { Homepage } from '@/globals/Homepage'
+import { Navigation } from '@/globals/Navigation'
+import { SeoDefaults } from '@/globals/SeoDefaults'
+import { SiteSettings } from '@/globals/SiteSettings'
+import { withAuditLog } from '@/lib/audit'
 import { DEFAULT_LOCALE } from '@/lib/constants'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+/** Koleksi yang punya halaman publik sendiri, sehingga perlu field SEO. */
+const seoCollections = ['pages', 'posts', 'projects', 'services', 'divisions', 'jobs'] as const
 
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
 
   admin: {
     user: Users.slug,
+    components: {
+      beforeDashboard: ['@/components/admin/DashboardStats#DashboardStats'],
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },
@@ -28,8 +60,10 @@ export default buildConfig({
     dateFormat: 'd MMMM yyyy',
   },
 
-  // Bahasa panel admin (bukan bahasa konten).
+  // Bahasa panel admin (bukan bahasa konten). Bawaan Bahasa Indonesia,
+  // Inggris tetap tersedia agar pengguna dapat menggantinya per akun.
   i18n: {
+    supportedLanguages: { id, en },
     fallbackLanguage: 'id',
   },
 
@@ -44,9 +78,59 @@ export default buildConfig({
     fallback: true,
   },
 
-  collections: [Users, Media],
+  // Setiap koleksi dibungkus pencatat aktivitas, kecuali yang dikecualikan
+  // di `withAuditLog` (log itu sendiri, media, dan data masuk dari publik).
+  collections: [
+    // Profil perusahaan
+    Divisions,
+    Services,
+    Team,
+    Clients,
+    Testimonials,
+    Certifications,
+    // Proyek
+    Projects,
+    ProjectCategories,
+    // Berita
+    Posts,
+    PostCategories,
+    // Karier
+    Jobs,
+    JobApplications,
+    // Konten lain
+    Pages,
+    Documents,
+    ContactSubmissions,
+    // Sistem
+    Media,
+    Users,
+    ActivityLogs,
+  ].map(withAuditLog),
+
+  globals: [Homepage, SiteSettings, Navigation, SeoDefaults],
 
   editor: lexicalEditor(),
+
+  plugins: [
+    seoPlugin({
+      collections: [...seoCollections],
+      uploadsCollection: 'media',
+      tabbedUI: true,
+      generateTitle: ({ doc }) => (doc?.title as string) ?? (doc?.name as string) ?? '',
+      generateDescription: ({ doc }) => (doc?.summary as string) ?? (doc?.excerpt as string) ?? '',
+    }),
+    redirectsPlugin({
+      collections: [...seoCollections],
+      overrides: {
+        admin: {
+          group: 'Pengaturan',
+          description:
+            'Arahkan URL lama ke URL baru (HTTP 301) agar tautan yang sudah tersebar tidak mati.',
+        },
+        access: { update: adminOnly, create: adminOnly, delete: adminOnly },
+      },
+    }),
+  ],
 
   db: postgresAdapter({
     pool: {

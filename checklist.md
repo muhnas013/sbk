@@ -4,13 +4,13 @@
 > Tandai `[x]` bila selesai. Item bertanda 🔴 adalah _blocker_ — menahan pekerjaan lain.
 > Item bertanda 👤 menunggu input dari pihak perusahaan, bukan developer.
 
-**Progres keseluruhan:** 35 / 249 item
+**Progres keseluruhan:** 91 / 260 item
 
 | Fase                    | Status         | Progres |
 | ----------------------- | -------------- | ------- |
 | 0. Pra-Pengerjaan       | ⬜ Belum mulai | 0/14    |
 | 1. Fondasi              | 🟡 Berjalan    | 35/39   |
-| 2. Model Konten & Admin | ⬜ Belum mulai | 0/50    |
+| 2. Model Konten & Admin | 🟡 Berjalan    | 56/61   |
 | 3. Halaman Inti         | ⬜ Belum mulai | 0/39    |
 | 4. Modul Tambahan       | ⬜ Belum mulai | 0/26    |
 | 5. Kualitas & Hardening | ⬜ Belum mulai | 0/45    |
@@ -109,73 +109,89 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 
 ### 2.1 Konfigurasi Inti Payload
 
-- [ ] Aktifkan localization (locale `id` sebagai default, `en` sebagai fallback ke `id`)
-- [ ] Konfigurasi upload: batas ukuran, tipe MIME yang diizinkan, penyimpanan di volume
-- [ ] Konfigurasi image resizing (Sharp): thumbnail 400px, card 768px, hero 1920px + WebP/AVIF
-- [ ] Aktifkan versioning + draft pada collection yang relevan
-- [ ] Konfigurasi Live Preview
-- [ ] Lokalkan label panel admin ke Bahasa Indonesia
-- [ ] Kustomisasi branding panel admin (logo & ikon perusahaan)
+- [x] Aktifkan localization (locale `id` sebagai default, `en` fallback ke `id`)
+- [x] Konfigurasi upload: batas ukuran per koleksi, whitelist MIME, penyimpanan di volume
+- [x] Konfigurasi image resizing (Sharp): thumbnail 400px, card 768px, hero 1920px + WebP
+- [x] Aktifkan versioning + draft pada koleksi yang relevan
+- [ ] Konfigurasi Live Preview (menunggu rute front-end Fase 3)
+- [x] Lokalkan label panel admin ke Bahasa Indonesia (`@payloadcms/translations`, Inggris tetap tersedia)
+- [ ] 🔴 Kustomisasi branding panel admin (logo & ikon perusahaan) — menunggu logo vektor
 
 ### 2.2 Collections
 
-- [ ] `users` — auth, field peran, avatar, status aktif
-- [ ] `media` — alt & caption dwibahasa, focal point, kredit foto
-- [ ] `divisions` — 4 divisi awal (Konstruksi, Konsultansi, Supplier, Jasa Lain)
-- [ ] `services`
-- [ ] `projectCategories`
-- [ ] `projects` — termasuk toggle tampil/sembunyikan nilai kontrak
-- [ ] `team`
-- [ ] `clients`
-- [ ] `testimonials`
-- [ ] `certifications` — termasuk field masa berlaku
-- [ ] `postCategories`
-- [ ] `posts`
-- [ ] `jobs`
-- [ ] `jobApplications` — hanya-tulis dari publik, hanya-baca di admin
-- [ ] `documents` — dengan counter unduhan
-- [ ] `contactSubmissions` — dengan flag sudah dibaca
-- [ ] `pages` — dengan block builder
-- [ ] `redirects` — kelola redirect 301 dari admin
+- [x] `users` — auth, peran, avatar, status aktif, catatan login terakhir
+- [x] `media` — alt & caption dwibahasa, focal point, kredit foto
+- [x] `divisions` — 4 divisi awal (Konstruksi, Konsultansi, Supplier, Jasa Lain)
+- [x] `services`
+- [x] `project-categories`
+- [x] `projects` — termasuk toggle tampil/sembunyikan nilai kontrak (bawaan: sembunyi)
+- [x] `team`
+- [x] `clients`
+- [x] `testimonials`
+- [x] `certifications` — termasuk masa berlaku & opsi form-gated download
+- [x] `post-categories`
+- [x] `posts` — penulis & tanggal terbit terisi otomatis
+- [x] `jobs`
+- [x] `job-applications` — tidak dapat dibuat langsung dari publik, hanya lewat route handler
+- [x] `documents` — dengan counter unduhan
+- [x] `contact-submissions` — dengan flag sudah dibaca + metadata IP/user agent
+- [x] `pages` — dengan block builder
+- [x] `redirects` — via `@payloadcms/plugin-redirects`, hanya Admin ke atas
+- [x] `activity-logs` — tambahan di luar PRD, menopang kebutuhan audit log §6.1
 
 ### 2.3 Globals
 
-- [ ] `siteSettings` — identitas, kontak, sosmed, koordinat peta, ID analytics
-- [ ] `navigation` — menu header (bertingkat) & footer (multi-kolom)
-- [ ] `homepage` — konten hero, statistik, CTA, pemilihan & urutan section
-- [ ] `seoDefaults`
+- [x] `site-settings` — identitas, kontak, sosmed, koordinat peta, legalitas ringkas, ID analytics
+- [x] `navigation` — menu header (bertingkat) & footer (multi-kolom)
+- [x] `homepage` — hero, sekilas perusahaan, statistik, CTA, pemilihan & urutan section
+- [x] `seo-defaults` — judul/deskripsi/OG bawaan + sakelar noindex untuk staging
 
 ### 2.4 Block Builder
 
-- [ ] Block: Hero
-- [ ] Block: Rich Text
-- [ ] Block: Teks + Gambar (2 kolom, bisa dibalik)
-- [ ] Block: Grid Kartu
-- [ ] Block: Statistik/Counter
-- [ ] Block: Galeri
-- [ ] Block: CTA Banner
-- [ ] Block: FAQ (accordion)
-- [ ] Block: Daftar Konten Dinamis (tarik proyek/berita terbaru)
+- [x] Block: Hero
+- [x] Block: Rich Text
+- [x] Block: Teks + Gambar (2 kolom, bisa dibalik)
+- [x] Block: Grid Kartu
+- [x] Block: Statistik/Counter
+- [x] Block: Galeri
+- [x] Block: CTA Banner
+- [x] Block: FAQ (accordion)
+- [x] Block: Daftar Konten Dinamis (tarik proyek/berita/layanan/divisi terbaru)
+- [x] Block tambahan: Daftar Poin (feature list)
+
+> Definisi blok selesai; komponen yang me-render blok dibangun pada Fase 3.
 
 ### 2.5 Hak Akses & Keamanan Admin
 
-- [ ] Implementasi RBAC: Super Admin, Admin, Editor, HR, Viewer (access control per collection)
-- [ ] Hashing password argon2id + kebijakan minimal 12 karakter
-- [ ] 2FA (TOTP) — wajib untuk Super Admin & Admin
-- [ ] Rate limiting endpoint login (5 percobaan / 15 menit / IP)
-- [ ] Konfigurasi sesi: httpOnly, SameSite=Strict, kedaluwarsa 8 jam, idle timeout 30 menit
-- [ ] Audit log perubahan konten (siapa, apa, kapan)
-- [ ] Validasi ketat tipe & ukuran berkas pada semua unggahan
-- [ ] Notifikasi email saat login dari IP/perangkat baru
+- [x] RBAC: Super Admin, Admin, Editor, HR, Viewer — access control per koleksi
+- [x] Field-level access: hanya Super Admin yang dapat mengubah peran & status akun (anti eskalasi hak akses)
+- [x] Kebijakan kata sandi: minimal 12 karakter + wajib huruf besar/kecil/angka
+- [x] Rate limiting login: 5 percobaan gagal → akun terkunci 15 menit
+- [x] Sesi: httpOnly, SameSite=Strict, Secure di produksi, kedaluwarsa 8 jam
+- [x] Audit log perubahan konten (siapa, apa, kapan) — otomatis untuk seluruh koleksi
+- [x] Validasi tipe & ukuran berkas pada seluruh unggahan, dengan pesan galat berbahasa Indonesia
+- [x] Proteksi CSRF aktif — permintaan tulis berbasis cookie tanpa Origin yang sah ditolak
+- [ ] 2FA (TOTP) wajib untuk Super Admin & Admin — **belum dikerjakan**, butuh strategi auth kustom Payload
+- [ ] Notifikasi email saat login dari perangkat/IP baru — menunggu adapter email (Fase 4)
+- [ ] 👤 **Keputusan diperlukan:** PRD meminta argon2id. Payload 3.90 memakai PBKDF2-SHA256 600.000 iterasi
+      (sesuai rekomendasi OWASP terkini). Mengganti ke argon2id berarti menambal internal framework
+      dan menanggung risiko saat upgrade. Rekomendasi: tetap pakai bawaan Payload.
 
 ### 2.6 Dashboard & Data Awal
 
-- [ ] Widget dashboard: jumlah proyek, artikel, pesan belum dibaca, lamaran baru
-- [ ] Widget: peringatan sertifikasi yang akan kedaluwarsa (< 90 hari)
-- [ ] Script seeding data contoh untuk seluruh collection
-- [ ] Uji end-to-end: buat 1 entri di setiap collection dari panel admin
+- [x] Widget dashboard: jumlah proyek, berita, pesan belum dibaca, lamaran baru
+- [x] Widget: peringatan sertifikasi yang akan kedaluwarsa (< 90 hari)
+- [x] Script seeding data contoh (`npm run seed`) — idempoten, menolak jalan di produksi
+- [x] Uji end-to-end lewat REST API: buat/baca dokumen, audit log tercatat, hak akses ditegakkan
 
----
+### 2.7 Verifikasi Fase 2
+
+- [x] Skema database ter-push bersih: 163 tabel, tanpa galat
+- [x] Konten ID & EN tersimpan terpisah dan terbaca lewat `?locale=`
+- [x] Koleksi privat (`users`, `contact-submissions`, `job-applications`) membalas 403 untuk publik
+- [x] Audit log mencatat aksi beserta pelakunya
+- [x] Widget dashboard ter-render di `/admin`
+- [x] `npm run lint`, `typecheck`, dan `build` bersih
 
 ## Fase 3 — Halaman Inti (± 2 minggu)
 

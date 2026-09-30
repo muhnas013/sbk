@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import { APIError, type CollectionConfig } from 'payload'
 import { anyone, contentEditor, superAdminOnly } from '@/access'
 import { ALLOWED_DOC_MIME, ALLOWED_IMAGE_MIME, IMAGE_SIZES, UPLOAD_LIMITS } from '@/lib/constants'
 
@@ -80,7 +80,7 @@ export const Media: CollectionConfig = {
         const size = req.file?.size
         if (typeof size === 'number' && size > UPLOAD_LIMITS.image) {
           const limitMb = Math.round(UPLOAD_LIMITS.image / (1024 * 1024))
-          throw new Error(`Ukuran berkas melebihi batas ${limitMb} MB.`)
+          throw new APIError(`Ukuran berkas melebihi batas ${limitMb} MB.`, 400)
         }
         return data
       },

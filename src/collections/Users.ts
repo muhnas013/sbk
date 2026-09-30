@@ -1,5 +1,8 @@
-import type { CollectionConfig } from 'payload'
+import { APIError, type CollectionConfig } from 'payload'
 import { adminOnly, selfOrSuperAdmin, superAdminFieldAccess, superAdminOnly } from '@/access'
+
+/** Panjang minimum kata sandi akun admin (prd.md §6.4). */
+const MIN_PASSWORD_LENGTH = 12
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -90,14 +93,37 @@ export const Users: CollectionConfig = {
     },
   ],
   hooks: {
+    beforeValidate: [
+      ({ data, operation }) => {
+        // Payload sendiri hanya mewajibkan 3 karakter. Kebijakan perusahaan
+        // (prd.md §6.4) meminta minimal 12 karakter untuk seluruh akun admin.
+        const password = (data as { password?: unknown } | undefined)?.password
+        if (typeof password === 'string' && password.length > 0) {
+          if (password.length < MIN_PASSWORD_LENGTH) {
+            throw new APIError(`Kata sandi minimal ${MIN_PASSWORD_LENGTH} karakter.`, 400)
+          }
+          if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+            throw new APIError('Kata sandi harus memuat huruf kecil, huruf besar, dan angka.', 400)
+          }
+        } else if (operation === 'create' && !password) {
+          // Pembuatan tanpa kata sandi ditolak lebih awal dengan pesan yang jelas.
+          throw new APIError('Kata sandi wajib diisi.', 400)
+        }
+        return data
+      },
+    ],
     afterLogin: [
       async ({ req, user }) => {
+        // `req` wajib diteruskan agar update ini ikut transaksi login.
+        // Tanpa itu, query berjalan di koneksi terpisah dan menunggu lock
+        // baris user yang masih dipegang transaksi login — permintaan menggantung.
         await req.payload.update({
           collection: 'users',
           id: user.id,
           data: { lastLoginAt: new Date().toISOString() },
           overrideAccess: true,
-          context: { skipRevalidate: true },
+          req,
+          context: { skipAudit: true },
         })
       },
     ],

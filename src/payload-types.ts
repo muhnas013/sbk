@@ -67,8 +67,25 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
+    divisions: Division;
+    services: Service;
+    team: Team;
+    clients: Client;
+    testimonials: Testimonial;
+    certifications: Certification;
+    projects: Project;
+    'project-categories': ProjectCategory;
+    posts: Post;
+    'post-categories': PostCategory;
+    jobs: Job;
+    'job-applications': JobApplication;
+    pages: Page;
+    documents: Document;
+    'contact-submissions': ContactSubmission;
     media: Media;
+    users: User;
+    'activity-logs': ActivityLog;
+    redirects: Redirect;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,8 +93,25 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    divisions: DivisionsSelect<false> | DivisionsSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    team: TeamSelect<false> | TeamSelect<true>;
+    clients: ClientsSelect<false> | ClientsSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    certifications: CertificationsSelect<false> | CertificationsSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    'project-categories': ProjectCategoriesSelect<false> | ProjectCategoriesSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
+    'post-categories': PostCategoriesSelect<false> | PostCategoriesSelect<true>;
+    jobs: JobsSelect<false> | JobsSelect<true>;
+    'job-applications': JobApplicationsSelect<false> | JobApplicationsSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    documents: DocumentsSelect<false> | DocumentsSelect<true>;
+    'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
+    'activity-logs': ActivityLogsSelect<false> | ActivityLogsSelect<true>;
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,8 +121,18 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('id' | 'en') | ('id' | 'en')[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    homepage: Homepage;
+    'site-settings': SiteSetting;
+    navigation: Navigation;
+    'seo-defaults': SeoDefault;
+  };
+  globalsSelect: {
+    homepage: HomepageSelect<false> | HomepageSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    navigation: NavigationSelect<false> | NavigationSelect<true>;
+    'seo-defaults': SeoDefaultsSelect<false> | SeoDefaultsSelect<true>;
+  };
   locale: 'id' | 'en';
   widgets: {
     collections: CollectionsWidget;
@@ -118,41 +162,54 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Lini usaha perusahaan. Layanan dan proyek dikelompokkan berdasarkan divisi.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "divisions".
  */
-export interface User {
+export interface Division {
   id: number;
   name: string;
   /**
-   * Menentukan modul apa saja yang dapat diakses pengguna ini.
+   * Dikosongkan = dibuat otomatis dari judul. Hindari mengubah slug yang sudah terbit.
    */
-  role: 'super-admin' | 'admin' | 'editor' | 'hr' | 'viewer';
+  slug?: string | null;
   /**
-   * Nonaktifkan untuk mencabut akses tanpa menghapus riwayat aktivitas pengguna.
+   * Satu sampai dua kalimat. Tampil di kartu divisi pada beranda.
    */
-  isActive?: boolean | null;
-  avatar?: (number | null) | Media;
-  lastLoginAt?: string | null;
+  summary?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  icon?: ('building' | 'ruler' | 'truck' | 'wrench' | 'map') | null;
+  coverImage?: (number | null) | Media;
+  /**
+   * Angka lebih kecil tampil lebih dahulu.
+   */
+  order?: number | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
   updatedAt: string;
   createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  resetPasswordRequestedAt?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * Pustaka gambar dan dokumen yang dipakai di seluruh situs.
@@ -211,6 +268,781 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  title: string;
+  summary?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  scope?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  process?:
+    | {
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  faq?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  coverImage?: (number | null) | Media;
+  gallery?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  /**
+   * Dikosongkan = dibuat otomatis dari judul. Hindari mengubah slug yang sudah terbit.
+   */
+  slug?: string | null;
+  division: number | Division;
+  featured?: boolean | null;
+  /**
+   * Angka lebih kecil tampil lebih dahulu.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team".
+ */
+export interface Team {
+  id: number;
+  name: string;
+  position: string;
+  photo: number | Media;
+  bio?: string | null;
+  linkedin?: string | null;
+  email?: string | null;
+  showOnHomepage?: boolean | null;
+  /**
+   * Angka lebih kecil tampil lebih dahulu.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Pastikan ada izin penggunaan logo sebelum menayangkannya.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients".
+ */
+export interface Client {
+  id: number;
+  name: string;
+  /**
+   * Disarankan SVG atau PNG latar transparan.
+   */
+  logo: number | Media;
+  category: 'government' | 'soe' | 'private';
+  website?: string | null;
+  isActive?: boolean | null;
+  /**
+   * Angka lebih kecil tampil lebih dahulu.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  quote: string;
+  name: string;
+  position?: string | null;
+  organization?: string | null;
+  photo?: (number | null) | Media;
+  project?: (number | null) | Project;
+  isActive?: boolean | null;
+  /**
+   * Angka lebih kecil tampil lebih dahulu.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Portofolio pekerjaan perusahaan.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  title: string;
+  /**
+   * Tampil pada kartu di daftar proyek dan hasil pencarian.
+   */
+  summary?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  scope?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Nama instansi atau perusahaan pemberi pekerjaan.
+   */
+  client?: string | null;
+  location?: string | null;
+  province?: string | null;
+  yearStarted?: number | null;
+  yearCompleted?: number | null;
+  /**
+   * Contoh: 180 hari kalender.
+   */
+  duration?: string | null;
+  projectStatus: 'completed' | 'ongoing' | 'planned';
+  /**
+   * Isi angka tanpa titik. Kosongkan bila tidak ingin dicatat.
+   */
+  contractValue?: number | null;
+  /**
+   * Nilai kontrak disembunyikan secara bawaan. Aktifkan hanya bila memang boleh dipublikasikan.
+   */
+  showContractValue?: boolean | null;
+  /**
+   * Rasio 4:3 disarankan. Dipakai di kartu daftar proyek.
+   */
+  coverImage: number | Media;
+  gallery?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  /**
+   * Dikosongkan = dibuat otomatis dari judul. Hindari mengubah slug yang sudah terbit.
+   */
+  slug?: string | null;
+  division: number | Division;
+  categories?: (number | ProjectCategory)[] | null;
+  featured?: boolean | null;
+  /**
+   * Angka lebih kecil tampil lebih dahulu.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-categories".
+ */
+export interface ProjectCategory {
+  id: number;
+  name: string;
+  /**
+   * Dikosongkan = dibuat otomatis dari judul. Hindari mengubah slug yang sudah terbit.
+   */
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Dokumen legal perusahaan. Tampilkan sebagai gambar ber-watermark; hindari mengunggah PDF asli yang dapat diunduh bebas.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "certifications".
+ */
+export interface Certification {
+  id: number;
+  name: string;
+  number?: string | null;
+  issuer?: string | null;
+  issuedAt?: string | null;
+  /**
+   * Kosongkan bila berlaku seumur perusahaan.
+   */
+  validUntil?: string | null;
+  /**
+   * Unggah versi gambar yang sudah diberi watermark, bukan scan asli.
+   */
+  image?: (number | null) | Media;
+  /**
+   * Isi hanya bila dokumen ini memang boleh diunduh publik. Pertimbangkan mengaktifkan "wajib isi form".
+   */
+  file?: (number | null) | Document;
+  isPublic?: boolean | null;
+  /**
+   * Pengunjung harus mengisi identitas sebelum berkas dapat diunduh.
+   */
+  requireFormToDownload?: boolean | null;
+  /**
+   * Angka lebih kecil tampil lebih dahulu.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Company profile, brosur, katalog, dan formulir yang dapat diunduh pengunjung.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents".
+ */
+export interface Document {
+  id: number;
+  title: string;
+  description?: string | null;
+  category?: ('company-profile' | 'brochure' | 'catalog' | 'form' | 'legal' | 'other') | null;
+  downloadCount?: number | null;
+  isPublic?: boolean | null;
+  /**
+   * Angka lebih kecil tampil lebih dahulu.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  /**
+   * Tampil di daftar berita dan pratinjau saat dibagikan.
+   */
+  excerpt?: string | null;
+  coverImage: number | Media;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Dikosongkan = dibuat otomatis dari judul. Hindari mengubah slug yang sudah terbit.
+   */
+  slug?: string | null;
+  category?: (number | null) | PostCategory;
+  author?: (number | null) | User;
+  /**
+   * Boleh diisi tanggal mendatang untuk menjadwalkan publikasi.
+   */
+  publishedAt?: string | null;
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "post-categories".
+ */
+export interface PostCategory {
+  id: number;
+  name: string;
+  /**
+   * Dikosongkan = dibuat otomatis dari judul. Hindari mengubah slug yang sudah terbit.
+   */
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name: string;
+  /**
+   * Menentukan modul apa saja yang dapat diakses pengguna ini.
+   */
+  role: 'super-admin' | 'admin' | 'editor' | 'hr' | 'viewer';
+  /**
+   * Nonaktifkan untuk mencabut akses tanpa menghapus riwayat aktivitas pengguna.
+   */
+  isActive?: boolean | null;
+  avatar?: (number | null) | Media;
+  lastLoginAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "jobs".
+ */
+export interface Job {
+  id: number;
+  title: string;
+  /**
+   * Dikosongkan = dibuat otomatis dari judul. Hindari mengubah slug yang sudah terbit.
+   */
+  slug?: string | null;
+  location?: string | null;
+  headcount?: number | null;
+  employmentType: 'full-time' | 'contract' | 'temporary' | 'internship';
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  responsibilities?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  qualifications?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  benefits?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  division?: (number | null) | Division;
+  /**
+   * Lowongan otomatis tidak menerima lamaran setelah tanggal ini.
+   */
+  closingDate?: string | null;
+  vacancyStatus?: ('open' | 'closed') | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Data pelamar. Berisi data pribadi — akses terbatas dan dihapus otomatis setelah 12 bulan.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "job-applications".
+ */
+export interface JobApplication {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  job: number | Job;
+  coverLetter?: string | null;
+  /**
+   * Persetujuan wajib sesuai UU No. 27/2022 tentang Pelindungan Data Pribadi.
+   */
+  consent: boolean;
+  status?: ('new' | 'reviewing' | 'interview' | 'rejected' | 'accepted') | null;
+  /**
+   * Tidak pernah ditampilkan ke pelamar.
+   */
+  internalNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * Halaman bebas yang disusun dari blok — mis. Kebijakan Privasi, K3/HSE, Syarat Penggunaan.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  /**
+   * Dikosongkan = dibuat otomatis dari judul. Hindari mengubah slug yang sudah terbit.
+   */
+  slug?: string | null;
+  layout?:
+    | (
+        | {
+            eyebrow?: string | null;
+            heading: string;
+            subheading?: string | null;
+            backgroundImage?: (number | null) | Media;
+            buttons?:
+              | {
+                  label?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            content?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'richText';
+          }
+        | {
+            eyebrow?: string | null;
+            heading?: string | null;
+            content?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            image: number | Media;
+            imagePosition?: ('right' | 'left') | null;
+            button?: {
+              label?: string | null;
+              href?: string | null;
+              id?: string | null;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'textImage';
+          }
+        | {
+            heading?: string | null;
+            columns?: ('2' | '3' | '4') | null;
+            cards?:
+              | {
+                  image?: (number | null) | Media;
+                  title: string;
+                  description?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cardGrid';
+          }
+        | {
+            items?:
+              | {
+                  value: number;
+                  /**
+                   * Contoh: +, %, m²
+                   */
+                  suffix?: string | null;
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'stats';
+          }
+        | {
+            heading?: string | null;
+            images?:
+              | {
+                  image: number | Media;
+                  caption?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'gallery';
+          }
+        | {
+            heading: string;
+            description?: string | null;
+            button?: {
+              label?: string | null;
+              href?: string | null;
+              id?: string | null;
+            };
+            backgroundImage?: (number | null) | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta';
+          }
+        | {
+            heading?: string | null;
+            faq?:
+              | {
+                  question: string;
+                  answer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqBlock';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'featureList';
+          }
+        | {
+            heading?: string | null;
+            source: 'projects' | 'projects-featured' | 'posts' | 'services' | 'divisions';
+            limit?: number | null;
+            viewAllHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentList';
+          }
+      )[]
+    | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Pengajuan dari form kontak situs.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions".
+ */
+export interface ContactSubmission {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string | null;
+  company?: string | null;
+  division?: (number | null) | Division;
+  subject: string;
+  message: string;
+  isRead?: boolean | null;
+  internalNotes?: string | null;
+  ipAddress?: string | null;
+  userAgent?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Catatan perubahan konten. Hanya dapat dibaca — tidak dapat disunting.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activity-logs".
+ */
+export interface ActivityLog {
+  id: number;
+  summary?: string | null;
+  action?: ('create' | 'update' | 'delete') | null;
+  collectionLabel?: string | null;
+  documentId?: string | null;
+  user?: (number | null) | User;
+  userEmail?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Arahkan URL lama ke URL baru (HTTP 301) agar tautan yang sudah tersebar tidak mati.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: number;
+  from: string;
+  to?: {
+    type?: ('reference' | 'custom') | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'projects';
+          value: number | Project;
+        } | null)
+      | ({
+          relationTo: 'services';
+          value: number | Service;
+        } | null)
+      | ({
+          relationTo: 'divisions';
+          value: number | Division;
+        } | null)
+      | ({
+          relationTo: 'jobs';
+          value: number | Job;
+        } | null);
+    url?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -234,12 +1066,80 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'divisions';
+        value: number | Division;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'team';
+        value: number | Team;
+      } | null)
+    | ({
+        relationTo: 'clients';
+        value: number | Client;
+      } | null)
+    | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
+      } | null)
+    | ({
+        relationTo: 'certifications';
+        value: number | Certification;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'project-categories';
+        value: number | ProjectCategory;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'post-categories';
+        value: number | PostCategory;
+      } | null)
+    | ({
+        relationTo: 'jobs';
+        value: number | Job;
+      } | null)
+    | ({
+        relationTo: 'job-applications';
+        value: number | JobApplication;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'documents';
+        value: number | Document;
+      } | null)
+    | ({
+        relationTo: 'contact-submissions';
+        value: number | ContactSubmission;
       } | null)
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: 'activity-logs';
+        value: number | ActivityLog;
+      } | null)
+    | ({
+        relationTo: 'redirects';
+        value: number | Redirect;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -285,31 +1185,510 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "divisions_select".
  */
-export interface UsersSelect<T extends boolean = true> {
+export interface DivisionsSelect<T extends boolean = true> {
   name?: T;
-  role?: T;
-  isActive?: T;
-  avatar?: T;
-  lastLoginAt?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  resetPasswordRequestedAt?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
+  slug?: T;
+  summary?: T;
+  description?: T;
+  icon?: T;
+  coverImage?: T;
+  order?: T;
+  meta?:
     | T
     | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
+        title?: T;
+        description?: T;
+        image?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  summary?: T;
+  description?: T;
+  scope?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  process?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  faq?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  coverImage?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  division?: T;
+  featured?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team_select".
+ */
+export interface TeamSelect<T extends boolean = true> {
+  name?: T;
+  position?: T;
+  photo?: T;
+  bio?: T;
+  linkedin?: T;
+  email?: T;
+  showOnHomepage?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients_select".
+ */
+export interface ClientsSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  category?: T;
+  website?: T;
+  isActive?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  quote?: T;
+  name?: T;
+  position?: T;
+  organization?: T;
+  photo?: T;
+  project?: T;
+  isActive?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "certifications_select".
+ */
+export interface CertificationsSelect<T extends boolean = true> {
+  name?: T;
+  number?: T;
+  issuer?: T;
+  issuedAt?: T;
+  validUntil?: T;
+  image?: T;
+  file?: T;
+  isPublic?: T;
+  requireFormToDownload?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  title?: T;
+  summary?: T;
+  description?: T;
+  scope?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  client?: T;
+  location?: T;
+  province?: T;
+  yearStarted?: T;
+  yearCompleted?: T;
+  duration?: T;
+  projectStatus?: T;
+  contractValue?: T;
+  showContractValue?: T;
+  coverImage?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  division?: T;
+  categories?: T;
+  featured?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-categories_select".
+ */
+export interface ProjectCategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  excerpt?: T;
+  coverImage?: T;
+  content?: T;
+  slug?: T;
+  category?: T;
+  author?: T;
+  publishedAt?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "post-categories_select".
+ */
+export interface PostCategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "jobs_select".
+ */
+export interface JobsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  location?: T;
+  headcount?: T;
+  employmentType?: T;
+  description?: T;
+  responsibilities?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  qualifications?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  benefits?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  division?: T;
+  closingDate?: T;
+  vacancyStatus?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "job-applications_select".
+ */
+export interface JobApplicationsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  job?: T;
+  coverLetter?: T;
+  consent?: T;
+  status?: T;
+  internalNotes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  layout?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              subheading?: T;
+              backgroundImage?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        richText?:
+          | T
+          | {
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        textImage?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              content?: T;
+              image?: T;
+              imagePosition?: T;
+              button?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        cardGrid?:
+          | T
+          | {
+              heading?: T;
+              columns?: T;
+              cards?:
+                | T
+                | {
+                    image?: T;
+                    title?: T;
+                    description?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        stats?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    value?: T;
+                    suffix?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              heading?: T;
+              images?:
+                | T
+                | {
+                    image?: T;
+                    caption?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              heading?: T;
+              description?: T;
+              button?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              backgroundImage?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqBlock?:
+          | T
+          | {
+              heading?: T;
+              faq?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        featureList?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        contentList?:
+          | T
+          | {
+              heading?: T;
+              source?: T;
+              limit?: T;
+              viewAllHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents_select".
+ */
+export interface DocumentsSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  category?: T;
+  downloadCount?: T;
+  isPublic?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions_select".
+ */
+export interface ContactSubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  company?: T;
+  division?: T;
+  subject?: T;
+  message?: T;
+  isRead?: T;
+  internalNotes?: T;
+  ipAddress?: T;
+  userAgent?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -367,6 +1746,64 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  isActive?: T;
+  avatar?: T;
+  lastLoginAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  resetPasswordRequestedAt?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activity-logs_select".
+ */
+export interface ActivityLogsSelect<T extends boolean = true> {
+  summary?: T;
+  action?: T;
+  collectionLabel?: T;
+  documentId?: T;
+  user?: T;
+  userEmail?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects_select".
+ */
+export interface RedirectsSelect<T extends boolean = true> {
+  from?: T;
+  to?:
+    | T
+    | {
+        type?: T;
+        reference?: T;
+        url?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -404,6 +1841,333 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Isi dan urutan section pada halaman beranda.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage".
+ */
+export interface Homepage {
+  id: number;
+  heroEyebrow?: string | null;
+  heroHeading: string;
+  heroSubheading?: string | null;
+  heroImage?: (number | null) | Media;
+  heroButtons?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  aboutEyebrow?: string | null;
+  aboutHeading?: string | null;
+  aboutContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  aboutImage?: (number | null) | Media;
+  stats?:
+    | {
+        value: number;
+        /**
+         * Contoh: +
+         */
+        suffix?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  ctaHeading?: string | null;
+  ctaDescription?: string | null;
+  ctaButton?: {
+    label?: string | null;
+    href?: string | null;
+  };
+  /**
+   * Geser untuk mengatur urutan. Hapus centang "Tampilkan" untuk menyembunyikan tanpa kehilangan isinya.
+   */
+  sections?:
+    | {
+        key:
+          | 'hero'
+          | 'about'
+          | 'divisions'
+          | 'stats'
+          | 'projects'
+          | 'certifications'
+          | 'testimonials'
+          | 'clients'
+          | 'posts'
+          | 'cta';
+        enabled?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  companyName: string;
+  tagline?: string | null;
+  /**
+   * Dipakai di footer dan sebagai deskripsi bawaan mesin pencari.
+   */
+  shortDescription?: string | null;
+  logoLight?: (number | null) | Media;
+  logoDark?: (number | null) | Media;
+  favicon?: (number | null) | Media;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  /**
+   * Format internasional tanpa tanda plus, contoh: 6281234567890.
+   */
+  whatsapp?: string | null;
+  operationalHours?: string | null;
+  mapLatitude?: number | null;
+  mapLongitude?: number | null;
+  socials?:
+    | {
+        platform: 'instagram' | 'facebook' | 'linkedin' | 'youtube' | 'tiktok' | 'x';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  nib?: string | null;
+  npwp?: string | null;
+  footerLegalNote?: string | null;
+  /**
+   * Contoh: G-XXXXXXXXXX. Aktif hanya setelah pengunjung menyetujui cookie.
+   */
+  googleAnalyticsId?: string | null;
+  searchConsoleVerification?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: number;
+  /**
+   * Dikosongkan = memakai struktur menu bawaan.
+   */
+  header?:
+    | {
+        label: string;
+        /**
+         * Tulis tanpa prefix bahasa, contoh: /proyek. Prefix /id atau /en ditambahkan otomatis.
+         */
+        href: string;
+        children?:
+          | {
+              label: string;
+              /**
+               * Tulis tanpa prefix bahasa, contoh: /proyek. Prefix /id atau /en ditambahkan otomatis.
+               */
+              href: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  footer?:
+    | {
+        title: string;
+        items?:
+          | {
+              label: string;
+              /**
+               * Tulis tanpa prefix bahasa, contoh: /proyek. Prefix /id atau /en ditambahkan otomatis.
+               */
+              href: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-defaults".
+ */
+export interface SeoDefault {
+  id: number;
+  /**
+   * Dipakai bila halaman tidak punya judul SEO sendiri.
+   */
+  defaultTitle?: string | null;
+  /**
+   * %s diganti dengan judul halaman.
+   */
+  titleTemplate?: string | null;
+  defaultDescription?: string | null;
+  /**
+   * Rasio 1200×630 piksel.
+   */
+  defaultOgImage?: (number | null) | Media;
+  /**
+   * Aktifkan hanya untuk lingkungan staging. Jangan pernah aktif di situs produksi.
+   */
+  noIndex?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage_select".
+ */
+export interface HomepageSelect<T extends boolean = true> {
+  heroEyebrow?: T;
+  heroHeading?: T;
+  heroSubheading?: T;
+  heroImage?: T;
+  heroButtons?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  aboutEyebrow?: T;
+  aboutHeading?: T;
+  aboutContent?: T;
+  aboutImage?: T;
+  stats?:
+    | T
+    | {
+        value?: T;
+        suffix?: T;
+        label?: T;
+        id?: T;
+      };
+  ctaHeading?: T;
+  ctaDescription?: T;
+  ctaButton?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+      };
+  sections?:
+    | T
+    | {
+        key?: T;
+        enabled?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  companyName?: T;
+  tagline?: T;
+  shortDescription?: T;
+  logoLight?: T;
+  logoDark?: T;
+  favicon?: T;
+  address?: T;
+  phone?: T;
+  email?: T;
+  whatsapp?: T;
+  operationalHours?: T;
+  mapLatitude?: T;
+  mapLongitude?: T;
+  socials?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  nib?: T;
+  npwp?: T;
+  footerLegalNote?: T;
+  googleAnalyticsId?: T;
+  searchConsoleVerification?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation_select".
+ */
+export interface NavigationSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  footer?:
+    | T
+    | {
+        title?: T;
+        items?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-defaults_select".
+ */
+export interface SeoDefaultsSelect<T extends boolean = true> {
+  defaultTitle?: T;
+  titleTemplate?: T;
+  defaultDescription?: T;
+  defaultOgImage?: T;
+  noIndex?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

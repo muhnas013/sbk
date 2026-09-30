@@ -47,6 +47,12 @@ export const publishedOrAuthenticated: Access = ({ req: { user } }) => {
 export const superAdminFieldAccess: FieldAccess = ({ req: { user } }) =>
   roleOf(user) === 'super-admin'
 
+/** Field-level: Super Admin & Admin. */
+export const adminFieldAccess: FieldAccess = ({ req: { user } }) => {
+  const role = roleOf(user)
+  return role === 'super-admin' || role === 'admin'
+}
+
 /** Pengguna hanya boleh menyunting dirinya sendiri, kecuali Super Admin. */
 export const selfOrSuperAdmin: Access = ({ req: { user } }) => {
   if (!user) return false

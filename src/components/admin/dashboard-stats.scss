@@ -1,0 +1,52 @@
+.sbk-dashboard {
+  margin-bottom: 2rem;
+
+  &__grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.25rem;
+    border: 1px solid var(--theme-elevation-150);
+    background: var(--theme-elevation-50);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 150ms ease;
+
+    &:hover {
+      border-color: var(--theme-elevation-400);
+    }
+
+    &--alert {
+      border-color: #b8873a;
+      background: rgba(184, 135, 58, 0.08);
+    }
+  }
+
+  &__value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--theme-elevation-600);
+  }
+
+  &__notice {
+    margin-top: 1rem;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid #b8873a;
+    background: rgba(184, 135, 58, 0.08);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+}

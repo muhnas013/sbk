@@ -4,7 +4,7 @@
 > Tandai `[x]` bila selesai. Item bertanda 🔴 adalah _blocker_ — menahan pekerjaan lain.
 > Item bertanda 👤 menunggu input dari pihak perusahaan, bukan developer.
 
-**Progres keseluruhan:** 134 / 265 item
+**Progres keseluruhan:** 162 / 269 item
 
 | Fase                    | Status         | Progres |
 | ----------------------- | -------------- | ------- |
@@ -12,7 +12,7 @@
 | 1. Fondasi              | 🟡 Berjalan    | 35/39   |
 | 2. Model Konten & Admin | 🟡 Berjalan    | 56/61   |
 | 3. Halaman Inti         | 🟡 Berjalan    | 43/44   |
-| 4. Modul Tambahan       | ⬜ Belum mulai | 0/26    |
+| 4. Modul Tambahan       | 🟡 Berjalan    | 28/30   |
 | 5. Kualitas & Hardening | ⬜ Belum mulai | 0/45    |
 | 6. Konten & Peluncuran  | ⬜ Belum mulai | 0/30    |
 | Pasca-Peluncuran        | ⬜ Belum mulai | 0/6     |
@@ -272,49 +272,60 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 
 ### 4.1 Legalitas & Sertifikasi
 
-- [ ] Halaman `/legalitas` — kartu/tabel dokumen
-- [ ] Tampilan gambar ber-watermark otomatis
-- [ ] Logika form-gated download (bila diaktifkan per dokumen)
-- [ ] Indikator masa berlaku
+- [x] Halaman `/legalitas` — kartu dokumen dengan nomor, penerbit, dan masa berlaku
+- [x] Menampilkan gambar dokumen (diunggah admin dalam versi ber-watermark)
+- [x] Indikator masa berlaku: badge "Berlaku" / "Masa berlaku habis"
+- [ ] Alur form-gated download — field `requireFormToDownload` sudah ada di model,
+      alurnya belum dibangun. Menunggu keputusan §0.1 soal cara menampilkan dokumen legal.
 
 ### 4.2 Klien & Mitra
 
-- [ ] Halaman `/klien` — grid logo dikelompokkan (Pemerintah / BUMN / Swasta)
-- [ ] Section testimoni
+- [x] Halaman `/klien` — grid logo dikelompokkan (Pemerintah / BUMN-BUMD / Swasta)
+- [x] Section testimoni
 
 ### 4.3 Berita/Artikel
 
-- [ ] `/berita` — daftar + filter kategori + pencarian + pagination
-- [ ] `/berita/[slug]` — artikel, penulis, tanggal, tombol berbagi
-- [ ] Artikel terkait
-- [ ] Penjadwalan publikasi berfungsi
-- [ ] RSS feed (opsional)
+- [x] `/berita` — daftar + filter kategori + pagination
+- [x] `/berita/[slug]` — artikel, penulis, tanggal, tombol berbagi
+- [x] Artikel terkait (berdasarkan kategori)
+- [x] Penjadwalan publikasi: artikel bertanggal mendatang tidak muncul di daftar maupun detail
+- [ ] RSS feed (opsional, belum dikerjakan)
+
+> Tombol berbagi memakai tautan share biasa, bukan SDK Facebook/LinkedIn —
+> tidak ada skrip pelacak pihak ketiga yang ikut termuat.
 
 ### 4.4 Karier
 
-- [ ] `/karier` — daftar lowongan aktif
-- [ ] `/karier/[slug]` — detail lowongan
-- [ ] Form lamaran + unggah CV (PDF/DOC, maks 5 MB)
-- [ ] Checkbox persetujuan pemrosesan data pribadi (wajib, UU PDP)
-- [ ] Simpan ke `jobApplications` + notifikasi email ke HR
-- [ ] Panel admin: filter pelamar, ubah status, unduh CV, catatan internal
-- [ ] Lowongan yang lewat batas waktu otomatis tertutup
-- [ ] Structured data `JobPosting`
+- [x] `/karier` — daftar lowongan aktif
+- [x] `/karier/[slug]` — detail lowongan (deskripsi, tanggung jawab, kualifikasi, benefit)
+- [x] Form lamaran + unggah CV (PDF/DOC/DOCX, maks 5 MB, tipe & ukuran divalidasi di server)
+- [x] Checkbox persetujuan pemrosesan data pribadi (wajib, UU No. 27/2022)
+- [x] Simpan ke `job-applications` + notifikasi email ke HR + rate limit 3 lamaran/jam per IP
+- [x] Panel admin: filter pelamar, ubah status, unduh CV, catatan internal
+- [x] Lowongan yang lewat tenggat otomatis tidak menerima lamaran — ditolak juga di sisi server,
+      bukan hanya disembunyikan dari tampilan
+- [x] Structured data `JobPosting`
 
 ### 4.5 Download Center
 
-- [ ] Halaman `/unduhan` — daftar dokumen per kategori
-- [ ] Tampilkan tipe berkas & ukuran otomatis
-- [ ] Counter unduhan bertambah saat file diunduh
-- [ ] Berkas disajikan lewat route terkontrol (tidak langsung dari path publik)
+- [x] Halaman `/unduhan` — daftar dokumen per kategori
+- [x] Menampilkan tipe berkas & ukuran otomatis
+- [x] Counter unduhan bertambah saat berkas diunduh
+- [x] Berkas disajikan lewat route terkontrol `/unduh/[id]`, bukan tautan langsung —
+      dokumen non-publik tidak bisa diambil dengan menebak nama berkas
 
 ### 4.6 Halaman Statis & Legal
 
-- [ ] Halaman Kebijakan Privasi
-- [ ] Halaman Syarat Penggunaan
-- [ ] Sistem halaman statis via block builder berfungsi untuk halaman baru
+- [x] Halaman Kebijakan Privasi
+- [x] Halaman Syarat Penggunaan
+- [x] Sistem halaman statis via block builder berfungsi — 10 jenis blok ter-render
 
----
+### 4.7 Verifikasi Fase 4
+
+- [x] Seluruh rute Fase 4 membalas 200 di ID dan EN
+- [x] Structured data `JobPosting` ter-render di halaman lowongan
+- [x] Konten blok tersimpan terpisah per bahasa dan tampil benar di keduanya
+- [x] `/unduh/[id]` membalas 404 untuk dokumen yang tidak ada atau tidak publik
 
 ## Fase 5 — Kualitas & Hardening (± 1 minggu)
 

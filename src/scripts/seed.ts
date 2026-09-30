@@ -381,6 +381,54 @@ const seed = async () => {
     },
   })
 
+  // --- Halaman statis wajib ----------------------------------------------
+  const staticPages = [
+    {
+      slug: 'kebijakan-privasi',
+      id: 'Kebijakan Privasi',
+      en: 'Privacy Policy',
+      bodyId:
+        'Halaman ini menjelaskan bagaimana perusahaan mengumpulkan, memakai, menyimpan, dan melindungi data pribadi pengunjung sesuai UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi. Ganti teks contoh ini dengan kebijakan resmi perusahaan sebelum peluncuran.',
+      bodyEn:
+        'This page explains how the company collects, uses, stores, and protects visitors\u2019 personal data in line with Indonesian Law No. 27 of 2022 on Personal Data Protection. Replace this placeholder with the official policy before launch.',
+    },
+    {
+      slug: 'syarat-penggunaan',
+      id: 'Syarat Penggunaan',
+      en: 'Terms of Use',
+      bodyId:
+        'Dengan mengakses situs ini, pengunjung menyetujui syarat penggunaan yang berlaku. Ganti teks contoh ini dengan syarat resmi perusahaan sebelum peluncuran.',
+      bodyEn:
+        'By accessing this site, visitors agree to the applicable terms of use. Replace this placeholder with the official terms before launch.',
+    },
+  ]
+
+  for (const page of staticPages) {
+    const doc = await payload.create({
+      collection: 'pages',
+      locale: 'id',
+      data: {
+        title: page.id,
+        slug: page.slug,
+        layout: [{ blockType: 'richText', content: lexicalParagraph(page.bodyId) }],
+        _status: 'published',
+      },
+    })
+    // Field ter-localize di dalam blocks menempel pada baris blok. Bila blok
+    // dikirim ulang tanpa `id` aslinya, Payload membangun ulang array dan
+    // konten locale sebelumnya ikut hilang — jadi id-nya dipakai kembali.
+    const blockId = doc.layout?.[0]?.id
+    await payload.update({
+      collection: 'pages',
+      id: doc.id,
+      locale: 'en',
+      data: {
+        title: page.en,
+        layout: [{ id: blockId, blockType: 'richText', content: lexicalParagraph(page.bodyEn) }],
+      },
+    })
+  }
+
   // --- Global -------------------------------------------------------------
   await payload.updateGlobal({
     slug: 'site-settings',
@@ -395,6 +443,43 @@ const seed = async () => {
       email: 'info@sabhumikaryabarito.test',
       whatsapp: '628110000000',
       operationalHours: 'Senin–Jumat, 08.00–16.00 WITA',
+    },
+  })
+
+  await payload.updateGlobal({
+    slug: 'about',
+    locale: 'id',
+    data: {
+      heading: 'Tentang PT Sabhumi Karya Barito',
+      intro:
+        'Perusahaan multi-lini yang bergerak di bidang konstruksi, konsultansi perencanaan, pengadaan material, dan jasa umum.',
+      profile: lexicalParagraph(
+        'Profil perusahaan contoh. Ganti dengan uraian sebenarnya sebelum peluncuran.',
+      ),
+      vision: 'Menjadi mitra pembangunan daerah yang dipercaya karena mutu dan ketepatan waktu.',
+      mission: [
+        { text: 'Melaksanakan pekerjaan sesuai spesifikasi dan jadwal yang disepakati.' },
+        { text: 'Menerapkan sistem manajemen keselamatan kerja pada setiap proyek.' },
+        { text: 'Mengembangkan kompetensi tenaga kerja lokal.' },
+      ],
+      values: [
+        { title: 'Mutu', description: 'Pengendalian mutu pada setiap tahap pekerjaan.' },
+        { title: 'Ketepatan Waktu', description: 'Jadwal yang direncanakan adalah komitmen.' },
+        { title: 'Keselamatan', description: 'Tidak ada pekerjaan yang layak mencederai orang.' },
+      ],
+      milestones: [
+        {
+          year: '2014',
+          title: 'Perusahaan didirikan',
+          description: 'Memulai pekerjaan konstruksi skala kecil.',
+        },
+        {
+          year: '2019',
+          title: 'Perluasan lini usaha',
+          description: 'Menambah layanan konsultansi dan pengadaan.',
+        },
+      ],
+      _status: 'published',
     },
   })
 
@@ -416,6 +501,15 @@ const seed = async () => {
         { value: 40, suffix: '+', label: 'Klien' },
         { value: 120, suffix: '+', label: 'Tenaga Kerja' },
       ],
+      aboutEyebrow: 'Sekilas Perusahaan',
+      aboutHeading: 'Mitra pembangunan untuk proyek pemerintah dan swasta',
+      aboutContent: lexicalParagraph(
+        'Kami menangani pekerjaan konstruksi, perencanaan, dan pengadaan material dengan tim bersertifikasi serta pengendalian mutu yang terukur.',
+      ),
+      ctaHeading: 'Siap membahas rencana pekerjaan Anda?',
+      ctaDescription:
+        'Kirim kebutuhan Anda, tim kami akan menyiapkan penawaran dan jadwal pelaksanaan.',
+      ctaButton: { label: 'Hubungi Kami', href: '/kontak' },
       sections: [
         { key: 'hero', enabled: true },
         { key: 'about', enabled: true },

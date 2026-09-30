@@ -18,6 +18,7 @@ export default function proxy(request: NextRequest) {
     pathname.startsWith('/_next') ||
     pathname.startsWith('/media') ||
     pathname === '/health' ||
+    pathname.startsWith('/unduh/') ||
     pathname === '/sitemap.xml' ||
     pathname === '/robots.txt' ||
     PUBLIC_FILE.test(pathname)

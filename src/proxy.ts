@@ -15,6 +15,9 @@ export default function proxy(request: NextRequest) {
   if (
     pathname.startsWith('/admin') ||
     pathname.startsWith('/api') ||
+    // Rute pratinjau Payload tidak berprefix bahasa; locale-nya dibawa
+    // sebagai query dan baru dipakai saat redirect ke halaman publik.
+    pathname.startsWith('/next/') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/media') ||
     pathname === '/health' ||

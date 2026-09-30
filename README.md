@@ -3,7 +3,12 @@
 Website company profile dwibahasa (ID/EN) dengan panel admin, dibangun dengan
 **Next.js 16 + Payload CMS 3 + PostgreSQL 16**.
 
-Dokumen acuan: [`prd.md`](./prd.md) · Progres pengerjaan: [`checklist.md`](./checklist.md)
+| Dokumen                                            | Untuk siapa                                   |
+| -------------------------------------------------- | --------------------------------------------- |
+| [`prd.md`](./prd.md)                               | Acuan lingkup dan spesifikasi                 |
+| [`checklist.md`](./checklist.md)                   | Progres pengerjaan                            |
+| [`docs/panduan-admin.md`](./docs/panduan-admin.md) | Tim yang mengisi konten                       |
+| [`docs/operasional.md`](./docs/operasional.md)     | Administrator teknis: deploy, backup, restore |
 
 ---
 

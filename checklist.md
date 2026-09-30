@@ -4,17 +4,17 @@
 > Tandai `[x]` bila selesai. Item bertanda 🔴 adalah _blocker_ — menahan pekerjaan lain.
 > Item bertanda 👤 menunggu input dari pihak perusahaan, bukan developer.
 
-**Progres keseluruhan:** 206 / 273 item
+**Progres keseluruhan:** 209 / 273 item
 
 | Fase                    | Status         | Progres |
 | ----------------------- | -------------- | ------- |
 | 0. Pra-Pengerjaan       | ⬜ Belum mulai | 0/14    |
 | 1. Fondasi              | 🟡 Berjalan    | 35/39   |
-| 2. Model Konten & Admin | 🟡 Berjalan    | 56/61   |
+| 2. Model Konten & Admin | 🟡 Berjalan    | 57/61   |
 | 3. Halaman Inti         | 🟡 Berjalan    | 43/44   |
 | 4. Modul Tambahan       | 🟡 Berjalan    | 28/30   |
 | 5. Kualitas & Hardening | 🟡 Berjalan    | 44/49   |
-| 6. Konten & Peluncuran  | ⬜ Belum mulai | 0/30    |
+| 6. Konten & Peluncuran  | 🟡 Berjalan    | 2/30    |
 | Pasca-Peluncuran        | ⬜ Belum mulai | 0/6     |
 
 ---
@@ -113,7 +113,8 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 - [x] Konfigurasi upload: batas ukuran per koleksi, whitelist MIME, penyimpanan di volume
 - [x] Konfigurasi image resizing (Sharp): thumbnail 400px, card 768px, hero 1920px + WebP
 - [x] Aktifkan versioning + draft pada koleksi yang relevan
-- [ ] Konfigurasi Live Preview (menunggu rute front-end Fase 3)
+- [x] Konfigurasi Live Preview — draft tampil di pratinjau, tetap 404 untuk publik;
+      akses pratinjau menuntut sesi admin dan menolak `path` ke domain luar
 - [x] Lokalkan label panel admin ke Bahasa Indonesia (`@payloadcms/translations`, Inggris tetap tersedia)
 - [ ] 🔴 Kustomisasi branding panel admin (logo & ikon perusahaan) — menunggu logo vektor
 
@@ -433,9 +434,9 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 
 ### 6.3 Serah Terima
 
-- [ ] Panduan penggunaan panel admin (bergambar, Bahasa Indonesia)
+- [x] Panduan penggunaan panel admin — `docs/panduan-admin.md`
 - [ ] Sesi pelatihan admin & editor
-- [ ] Dokumentasi teknis: arsitektur, cara deploy, cara restore backup
+- [x] Dokumentasi teknis: arsitektur, deploy, backup, restore — `docs/operasional.md`
 - [ ] Serah terima kredensial (VPS, domain, database, SMTP, analytics) via kanal aman
 - [ ] Buat akun untuk seluruh admin/editor yang ditunjuk
 

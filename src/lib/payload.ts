@@ -1,4 +1,5 @@
 import { cache } from 'react'
+import { draftMode } from 'next/headers'
 import { getPayload, type Where } from 'payload'
 import config from '@payload-config'
 import type { Locale } from '@/lib/constants'
@@ -18,16 +19,34 @@ type FindArgs = {
   depth?: number
 }
 
+/**
+ * Apakah permintaan ini berjalan dalam mode pratinjau admin?
+ * `draftMode()` melempar bila dipanggil di konteks yang tidak mendukungnya
+ * (mis. saat generateStaticParams), jadi kegagalannya diartikan "bukan draft".
+ */
+const isDraftRequest = async (): Promise<boolean> => {
+  try {
+    return (await draftMode()).isEnabled
+  } catch {
+    return false
+  }
+}
+
 /** Hanya dokumen terbit yang boleh tampil di situs publik. */
 const publishedOnly = (where?: Where): Where => ({
   and: [{ _status: { equals: 'published' } }, ...(where ? [where] : [])],
 })
+
+/** Dalam pratinjau, draft ikut ditampilkan; di luar itu hanya yang terbit. */
+const statusFilter = async (where?: Where): Promise<Where | undefined> =>
+  (await isDraftRequest()) ? where : publishedOnly(where)
 
 export const findPublished = async <T = unknown>(
   collection: 'projects' | 'services' | 'divisions' | 'posts' | 'jobs' | 'pages',
   { locale, limit = 12, page = 1, sort, where, depth = 1 }: FindArgs,
 ) => {
   const payload = await getPayloadClient()
+  const draft = await isDraftRequest()
   return payload.find({
     collection,
     locale,
@@ -36,8 +55,9 @@ export const findPublished = async <T = unknown>(
     page,
     sort,
     depth,
-    where: publishedOnly(where),
-    overrideAccess: false,
+    draft,
+    where: await statusFilter(where),
+    overrideAccess: draft,
   }) as unknown as Promise<{
     docs: T[]
     totalDocs: number
@@ -55,14 +75,16 @@ export const findPublishedBySlug = async <T = unknown>(
   depth = 2,
 ): Promise<T | null> => {
   const payload = await getPayloadClient()
+  const draft = await isDraftRequest()
   const result = await payload.find({
     collection,
     locale,
     fallbackLocale: 'id',
     limit: 1,
     depth,
-    where: publishedOnly({ slug: { equals: slug } }),
-    overrideAccess: false,
+    draft,
+    where: await statusFilter({ slug: { equals: slug } }),
+    overrideAccess: draft,
   })
   return (result.docs[0] as T) ?? null
 }
@@ -99,10 +121,12 @@ export const getGlobal = async <T = unknown>(
   depth = 1,
 ): Promise<T> => {
   const payload = await getPayloadClient()
+  const draft = await isDraftRequest()
   return payload.findGlobal({
     slug,
     locale,
     fallbackLocale: 'id',
     depth,
+    draft,
   }) as Promise<T>
 }

@@ -37,6 +37,7 @@ import { SiteSettings } from '@/globals/SiteSettings'
 import { withAuditLog } from '@/lib/audit'
 import { emailAdapter } from '@/lib/email'
 import { DEFAULT_LOCALE } from '@/lib/constants'
+import { collectionPreviewUrl, globalPreviewUrl, PREVIEW_BREAKPOINTS } from '@/lib/preview'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -60,6 +61,19 @@ export default buildConfig({
       description: 'Panel administrasi website PT Sabhumi Karya Barito',
     },
     dateFormat: 'd MMMM yyyy',
+    livePreview: {
+      breakpoints: [...PREVIEW_BREAKPOINTS],
+      collections: ['pages', 'posts', 'projects', 'services', 'divisions', 'jobs'],
+      globals: ['homepage', 'about'],
+      url: ({ data, collectionConfig, globalConfig, locale }) =>
+        collectionConfig
+          ? collectionPreviewUrl(
+              data as Record<string, unknown>,
+              collectionConfig.slug,
+              locale?.code ?? DEFAULT_LOCALE,
+            )
+          : globalPreviewUrl(globalConfig?.slug ?? '', locale?.code ?? DEFAULT_LOCALE),
+    },
   },
 
   // Bahasa panel admin (bukan bahasa konten). Bawaan Bahasa Indonesia,

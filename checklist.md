@@ -4,14 +4,14 @@
 > Tandai `[x]` bila selesai. Item bertanda 🔴 adalah _blocker_ — menahan pekerjaan lain.
 > Item bertanda 👤 menunggu input dari pihak perusahaan, bukan developer.
 
-**Progres keseluruhan:** 91 / 260 item
+**Progres keseluruhan:** 134 / 265 item
 
 | Fase                    | Status         | Progres |
 | ----------------------- | -------------- | ------- |
 | 0. Pra-Pengerjaan       | ⬜ Belum mulai | 0/14    |
 | 1. Fondasi              | 🟡 Berjalan    | 35/39   |
 | 2. Model Konten & Admin | 🟡 Berjalan    | 56/61   |
-| 3. Halaman Inti         | ⬜ Belum mulai | 0/39    |
+| 3. Halaman Inti         | 🟡 Berjalan    | 43/44   |
 | 4. Modul Tambahan       | ⬜ Belum mulai | 0/26    |
 | 5. Kualitas & Hardening | ⬜ Belum mulai | 0/45    |
 | 6. Konten & Peluncuran  | ⬜ Belum mulai | 0/30    |
@@ -197,62 +197,76 @@ Fase ini harus tuntas sebelum Fase 1 dimulai agar tidak ada rework.
 
 ### 3.1 Beranda
 
-- [ ] Section Hero
-- [ ] Section Sekilas Perusahaan
-- [ ] Section Divisi Usaha (4 kartu)
-- [ ] Section Statistik (counter animasi)
-- [ ] Section Proyek Terpilih
-- [ ] Section Legalitas & Sertifikasi
-- [ ] Section Testimoni (carousel)
-- [ ] Section Klien & Mitra (marquee logo)
-- [ ] Section Berita Terbaru
-- [ ] Section CTA Penutup
-- [ ] Urutan & visibilitas section dapat diatur dari admin
+- [x] Section Hero (gambar latar + gradien penjaga kontras teks)
+- [x] Section Sekilas Perusahaan
+- [x] Section Divisi Usaha (4 kartu)
+- [x] Section Statistik (counter animasi, menghormati `prefers-reduced-motion`)
+- [x] Section Proyek Terpilih
+- [x] Section Legalitas & Sertifikasi
+- [x] Section Testimoni
+- [x] Section Klien & Mitra
+- [x] Section Berita Terbaru
+- [x] Section CTA Penutup
+- [x] Urutan & visibilitas section dapat diatur dari admin (global `homepage`)
 
 ### 3.2 Tentang Kami
 
-- [ ] Hero + profil perusahaan
-- [ ] Timeline sejarah singkat
-- [ ] Visi & Misi
-- [ ] Nilai perusahaan (ikon + judul + deskripsi)
-- [ ] Struktur organisasi
-- [ ] Tim manajemen (grid foto + bio)
+- [x] Hero + profil perusahaan
+- [x] Timeline sejarah singkat
+- [x] Visi & Misi
+- [x] Nilai perusahaan
+- [x] Struktur organisasi (gambar, dapat digeser horizontal di layar kecil)
+- [x] Tim manajemen (grid foto + bio)
+
+> Tambahan di luar model Fase 2: global `about` dibuat untuk menampung profil,
+> visi, misi, nilai, sejarah, dan struktur organisasi — bidang ini belum ada di
+> model konten awal padahal diminta prd.md §5.2.
 
 ### 3.3 Layanan & Divisi
 
-- [ ] `/layanan` — daftar dikelompokkan per divisi
-- [ ] `/divisi/[slug]` — hero, deskripsi, layanan terkait, proyek terkait, CTA
-- [ ] `/layanan/[slug]` — deskripsi, lingkup pekerjaan, alur proses, galeri, FAQ, proyek terkait
+- [x] `/layanan` — daftar dikelompokkan per divisi
+- [x] `/divisi/[slug]` — hero, deskripsi, layanan terkait, proyek terkait, CTA
+- [x] `/layanan/[slug]` — deskripsi, lingkup pekerjaan, alur proses, galeri, FAQ, proyek terkait
 
 ### 3.4 Proyek
 
-- [ ] `/proyek` — grid kartu + pagination
-- [ ] Filter: divisi, kategori, tahun, status (state tersimpan di URL query)
-- [ ] Pencarian teks
-- [ ] `/proyek/[slug]` — hero, tabel spesifikasi, deskripsi, galeri
-- [ ] Galeri dengan lightbox (navigasi keyboard, tombol tutup, swipe di mobile)
-- [ ] Section proyek terkait
-- [ ] Logika sembunyikan nilai kontrak sesuai toggle admin
+- [x] `/proyek` — grid kartu + pagination berbasis tautan (berfungsi tanpa JavaScript)
+- [x] Filter: divisi, kategori, tahun, status — seluruh state di query string
+- [x] Pencarian teks (judul, ringkasan, lokasi, pemberi kerja)
+- [x] `/proyek/[slug]` — hero, tabel spesifikasi, deskripsi, lingkup pekerjaan
+- [x] Galeri dengan lightbox: fokus terkunci, navigasi panah, Esc menutup
+- [x] Section proyek terkait
+- [x] Nilai kontrak hanya tampil bila admin mengaktifkannya per proyek
 
 ### 3.5 Kontak
 
-- [ ] Form kontak (nama, email, telepon, perusahaan, divisi tujuan, subjek, pesan)
-- [ ] Validasi sisi klien & server (Zod)
-- [ ] Integrasi Cloudflare Turnstile + honeypot + rate limit per IP
-- [ ] Simpan ke `contactSubmissions` + kirim notifikasi email
-- [ ] Halaman/state sukses & penanganan error
-- [ ] Blok informasi kontak + jam operasional
-- [ ] Embed Google Maps (lazy load, tidak memblokir render)
+- [x] Form kontak (nama, email, telepon, perusahaan, divisi tujuan, subjek, pesan)
+- [x] Validasi sisi klien & server (Zod di server action)
+- [x] Cloudflare Turnstile + honeypot + rate limit 5 kiriman / 15 menit per IP
+- [x] Simpan ke `contact-submissions` + kirim notifikasi email
+- [x] State sukses & penanganan error di dalam form
+- [x] Blok informasi kontak + jam operasional
+- [x] Embed peta (lazy load, tidak memblokir render)
+
+> Peta memakai OpenStreetMap, bukan Google Maps: tidak butuh API key berbayar,
+> tidak menanam cookie pihak ketiga, dan lolos cookie consent tanpa syarat.
+> Bisa diganti ke Google Maps bila perusahaan menginginkannya.
 
 ### 3.6 Internasionalisasi
 
-- [ ] Routing `/id` & `/en` berfungsi di semua halaman
-- [ ] Pengalih bahasa mempertahankan halaman yang sedang dibuka
-- [ ] Fallback otomatis ke ID bila konten EN kosong
-- [ ] Terjemahan string UI statis (tombol, label, pesan error)
-- [ ] Tag `hreflang` + canonical benar
+- [x] Routing `/id` & `/en` berfungsi di semua halaman
+- [x] Pengalih bahasa mempertahankan halaman yang sedang dibuka
+- [x] Fallback otomatis ke ID bila konten EN kosong
+- [x] Terjemahan string UI statis (tipe kamus diturunkan dari versi ID — kunci yang terlewat gagal saat typecheck)
+- [x] Tag `hreflang` + canonical benar
 
----
+### 3.7 Verifikasi Fase 3
+
+- [x] Seluruh rute membalas 200; halaman tidak dikenal membalas 404
+- [x] Filter & pagination proyek bekerja lewat query string
+- [x] Gambar Payload dilayani sebagai path relatif — dioptimasi `next/image` tanpa `remotePatterns`
+- [x] Jalur penyimpanan pesan kontak diverifikasi; pembuatan langsung oleh publik ditolak
+- [ ] Uji kirim form kontak dari peramban sungguhan (termasuk Turnstile) — perlu dilakukan di staging
 
 ## Fase 4 — Modul Tambahan (± 1,5 minggu)
 

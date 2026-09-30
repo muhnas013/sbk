@@ -123,12 +123,14 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('id' | 'en') | ('id' | 'en')[];
   globals: {
     homepage: Homepage;
+    about: About;
     'site-settings': SiteSetting;
     navigation: Navigation;
     'seo-defaults': SeoDefault;
   };
   globalsSelect: {
     homepage: HomepageSelect<false> | HomepageSelect<true>;
+    about: AboutSelect<false> | AboutSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     navigation: NavigationSelect<false> | NavigationSelect<true>;
     'seo-defaults': SeoDefaultsSelect<false> | SeoDefaultsSelect<true>;
@@ -1921,6 +1923,63 @@ export interface Homepage {
   createdAt?: string | null;
 }
 /**
+ * Profil, sejarah, visi, misi, nilai perusahaan, dan struktur organisasi.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about".
+ */
+export interface About {
+  id: number;
+  heading?: string | null;
+  intro?: string | null;
+  profile?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  image?: (number | null) | Media;
+  heroImage?: (number | null) | Media;
+  vision?: string | null;
+  mission?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  values?:
+    | {
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  milestones?:
+    | {
+        year: string;
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Unggah sebagai gambar. Isi alt text agar tetap dapat diakses.
+   */
+  orgChart?: (number | null) | Media;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings".
  */
@@ -2080,6 +2139,44 @@ export interface HomepageSelect<T extends boolean = true> {
         enabled?: T;
         id?: T;
       };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about_select".
+ */
+export interface AboutSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  profile?: T;
+  image?: T;
+  heroImage?: T;
+  vision?: T;
+  mission?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  values?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  milestones?:
+    | T
+    | {
+        year?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  orgChart?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;

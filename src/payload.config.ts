@@ -29,11 +29,13 @@ import { Services } from '@/collections/Services'
 import { Team } from '@/collections/Team'
 import { Testimonials } from '@/collections/Testimonials'
 import { Users } from '@/collections/Users'
+import { About } from '@/globals/About'
 import { Homepage } from '@/globals/Homepage'
 import { Navigation } from '@/globals/Navigation'
 import { SeoDefaults } from '@/globals/SeoDefaults'
 import { SiteSettings } from '@/globals/SiteSettings'
 import { withAuditLog } from '@/lib/audit'
+import { emailAdapter } from '@/lib/email'
 import { DEFAULT_LOCALE } from '@/lib/constants'
 
 const filename = fileURLToPath(import.meta.url)
@@ -107,9 +109,11 @@ export default buildConfig({
     ActivityLogs,
   ].map(withAuditLog),
 
-  globals: [Homepage, SiteSettings, Navigation, SeoDefaults],
+  globals: [Homepage, About, SiteSettings, Navigation, SeoDefaults],
 
   editor: lexicalEditor(),
+
+  email: emailAdapter,
 
   plugins: [
     seoPlugin({

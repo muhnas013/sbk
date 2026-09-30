@@ -141,6 +141,26 @@ Buka **Konten → Beranda**. Isinya terbagi dalam beberapa tab:
 Pada tab **Susunan Section**, geser baris untuk mengubah urutan. Hapus centang
 **Tampilkan** untuk menyembunyikan satu bagian tanpa kehilangan isinya.
 
+### Mengganti logo perusahaan
+
+**Pengaturan → Pengaturan Situs → tab Identitas**. Tersedia tiga berkas:
+
+| Field                   | Dipakai di mana                      | Saran                                                                |
+| ----------------------- | ------------------------------------ | -------------------------------------------------------------------- |
+| **Logo (latar terang)** | Header di bagian atas setiap halaman | Versi berwarna atau gelap, latar transparan                          |
+| **Logo (latar gelap)**  | Footer, yang berlatar hitam          | Versi putih/terang. Bila dikosongkan, logo latar terang yang dipakai |
+| **Favicon**             | Ikon kecil di tab peramban           | Bentuk persegi, minimal 512×512 piksel                               |
+
+Unggah dalam format **SVG** bila ada — hasilnya tetap tajam di layar mana pun.
+Bila tidak, pakai PNG dengan latar transparan, tinggi minimal 200 piksel.
+
+Logo ditampilkan dengan tinggi tetap dan lebar mengikuti rasio aslinya, jadi
+logo memanjang maupun persegi sama-sama tampil utuh tanpa gepeng.
+
+> Selama logo belum diunggah, header dan footer menampilkan **nama perusahaan
+> sebagai teks**. Situs tetap tampil wajar, jadi tidak perlu menunggu berkas
+> logo siap sebelum menayangkan halaman lain.
+
 ### Mengganti nomor telepon, alamat, atau media sosial
 
 **Pengaturan → Pengaturan Situs**. Nilai di sini dipakai di footer, halaman

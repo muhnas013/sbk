@@ -72,7 +72,13 @@ const LocaleLayout = async ({
         {dict.nav.skipToContent}
       </a>
 
-      <Header locale={locale} dict={dict} items={headerItems} companyName={companyName} />
+      <Header
+        locale={locale}
+        dict={dict}
+        items={headerItems}
+        companyName={companyName}
+        logo={site.logoLight}
+      />
 
       <main id="main">{children}</main>
 
@@ -92,6 +98,7 @@ const LocaleLayout = async ({
           })),
         }}
         legalNote={site.footerLegalNote}
+        logo={site.logoDark ?? site.logoLight}
       />
 
       <CookieConsent locale={locale} analyticsId={site.googleAnalyticsId} />

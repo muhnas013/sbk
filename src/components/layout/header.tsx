@@ -5,10 +5,12 @@ import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { LocaleSwitcher } from '@/components/layout/locale-switcher'
+import { SiteLogo } from '@/components/layout/site-logo'
 import { ButtonLink } from '@/components/ui/button'
 import { Container } from '@/components/ui/container'
 import type { Dictionary } from '@/i18n/dictionaries'
 import type { Locale } from '@/lib/constants'
+import type { Media } from '@/payload-types'
 import { cn } from '@/lib/utils'
 
 export type NavItem = {
@@ -22,11 +24,13 @@ export const Header = ({
   dict,
   items,
   companyName,
+  logo,
 }: {
   locale: Locale
   dict: Dictionary
   items: NavItem[]
   companyName: string
+  logo?: number | Media | null
 }) => {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
@@ -65,12 +69,7 @@ export const Header = ({
       )}
     >
       <Container className="flex h-20 items-center justify-between gap-6">
-        <Link
-          href={`/${locale}`}
-          className="font-heading text-sm font-extrabold uppercase tracking-tight"
-        >
-          {companyName}
-        </Link>
+        <SiteLogo href={`/${locale}`} logo={logo} companyName={companyName} />
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label={dict.nav.menu}>
           {items.map((item) => (

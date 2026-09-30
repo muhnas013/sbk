@@ -4,6 +4,10 @@ import type { SeoDefault } from '@/payload-types'
 
 const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
+// Dibuat per permintaan: sakelar `noIndex` dibaca dari database.
+export const dynamic = 'force-dynamic'
+export const revalidate = 3600
+
 const robots = async (): Promise<MetadataRoute.Robots> => {
   const defaults = await getGlobal<SeoDefault>('seo-defaults', 'id', 0)
 

@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import { Mail, MapPin, Phone } from 'lucide-react'
+import { SiteLogo } from '@/components/layout/site-logo'
 import { Container } from '@/components/ui/container'
 import type { Dictionary } from '@/i18n/dictionaries'
 import type { Locale } from '@/lib/constants'
+import type { Media } from '@/payload-types'
 
 export type FooterColumn = {
   title: string
@@ -24,6 +26,7 @@ export const Footer = ({
   columns,
   contact,
   legalNote,
+  logo,
 }: {
   locale: Locale
   dict: Dictionary
@@ -32,13 +35,12 @@ export const Footer = ({
   columns: FooterColumn[]
   contact: FooterContact
   legalNote?: string | null
+  logo?: number | Media | null
 }) => (
   <footer className="tone-dark bg-ink text-paper">
     <Container className="grid gap-12 py-16 lg:grid-cols-4 lg:py-20">
       <div className="lg:col-span-1">
-        <Link href={`/${locale}`} className="font-heading text-sm font-extrabold uppercase">
-          {companyName}
-        </Link>
+        <SiteLogo href={`/${locale}`} logo={logo} companyName={companyName} />
         {tagline && <p className="mt-4 text-xs leading-relaxed text-stone-light">{tagline}</p>}
         {legalNote && <p className="mt-6 text-xs text-stone-light">{legalNote}</p>}
       </div>

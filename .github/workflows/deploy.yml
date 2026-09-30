@@ -17,9 +17,28 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - uses: actions/checkout@v5
+      - name: Periksa kelengkapan secrets
+        id: guard
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          # Tanpa penjaga ini, workflow gagal setiap kali sampai server
+          # disiapkan — kegagalan rutin membuat orang berhenti memperhatikan CI.
+          if [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || [ -z "$SSH_PRIVATE_KEY" ] || [ -z "$DEPLOY_PATH" ]; then
+            echo "::notice::Secrets deploy belum lengkap — langkah deploy dilewati."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.guard.outputs.ready == 'true'
+        uses: actions/checkout@v5
 
       - name: Siapkan kunci SSH
+        if: steps.guard.outputs.ready == 'true'
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
@@ -27,6 +46,7 @@ jobs:
           ssh-keyscan -p "${{ secrets.SSH_PORT || 22 }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Tarik perubahan & bangun ulang container
+        if: steps.guard.outputs.ready == 'true'
         run: |
           ssh -p "${{ secrets.SSH_PORT || 22 }}" \
             "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
@@ -39,6 +59,7 @@ jobs:
              docker image prune -f"
 
       - name: Verifikasi health check
+        if: steps.guard.outputs.ready == 'true'
         run: |
           for i in $(seq 1 30); do
             if curl -fsS "https://${{ secrets.SITE_DOMAIN }}/health" > /dev/null; then

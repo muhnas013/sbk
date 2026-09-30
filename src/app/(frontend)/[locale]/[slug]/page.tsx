@@ -4,7 +4,7 @@ import { RenderBlocks } from '@/components/blocks/render-blocks'
 import { PageHero } from '@/components/page-hero'
 import { getDictionary } from '@/i18n/dictionaries'
 import { isLocale } from '@/lib/constants'
-import { findPublished, findPublishedBySlug } from '@/lib/payload'
+import { findPublishedBySlug } from '@/lib/payload'
 import { buildMetadata } from '@/lib/seo'
 import type { Page } from '@/payload-types'
 
@@ -12,17 +12,17 @@ export const revalidate = 300
 
 type Params = { params: Promise<{ locale: string; slug: string }> }
 
-/**
+/*
  * Halaman statis yang disusun admin lewat block builder — mis. Kebijakan
  * Privasi, Syarat Penggunaan, K3/HSE. Rute statis lain (proyek, berita, dsb.)
  * lebih diprioritaskan Next.js, jadi tidak akan tertangkap di sini.
+ *
+ * Sengaja TANPA `generateStaticParams`. Lapisan data memanggil `draftMode()`
+ * untuk mendukung pratinjau, dan itu API dinamis — mendeklarasikan rute ini
+ * sebagai statis membuatnya gagal dengan DYNAMIC_SERVER_USAGE saat dijalankan
+ * di mode produksi. Seluruh rute lain pun dinamis dengan alasan yang sama;
+ * caching ditangani `revalidate` di bawah.
  */
-export const generateStaticParams = async () => {
-  const pages = await findPublished<Page>('pages', { locale: 'id', limit: 100, depth: 0 })
-  return pages.docs
-    .filter((page): page is Page & { slug: string } => Boolean(page.slug))
-    .map((page) => ({ slug: page.slug }))
-}
 
 export const generateMetadata = async ({ params }: Params): Promise<Metadata> => {
   const { locale, slug } = await params

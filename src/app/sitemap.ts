@@ -5,6 +5,10 @@ import type { Division, Job, Page, Post, Project, Service } from '@/payload-type
 
 const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
+// Dibuat per permintaan, bukan saat build: isinya bergantung pada database.
+export const dynamic = 'force-dynamic'
+export const revalidate = 3600
+
 /** Rute tetap yang selalu ada, ditulis tanpa prefix bahasa. */
 const STATIC_PATHS = [
   { path: '', priority: 1 },

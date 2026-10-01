@@ -255,7 +255,25 @@ Log bersifat baca-saja dan hanya dapat dilihat Admin ke atas.
 
 ---
 
-## 11. Bila Terjadi Masalah
+## 11. Menghapus Konten Demo
+
+Bila situs diisi konten demo lebih dulu agar tampilannya dapat dinilai, konten
+itu **wajib diganti sebelum situs diumumkan**. Isinya memuat nama proyek, klien,
+dan testimoni yang tidak nyata.
+
+Selama konten demo terpasang di server, sakelar **noIndex** dinyalakan otomatis
+sehingga situs tidak diindeks mesin pencari. Setelah konten asli masuk:
+
+1. Buka **Pengaturan → SEO Bawaan**
+2. Hapus centang **Cegah Seluruh Situs Diindeks Mesin Pencari**
+3. Simpan
+
+Jangan lupa langkah ini — selama masih tercentang, situs tidak akan pernah
+muncul di hasil pencarian Google.
+
+---
+
+## 12. Bila Terjadi Masalah
 
 | Gejala                            | Yang harus dilakukan                                                      |
 | --------------------------------- | ------------------------------------------------------------------------- |

@@ -145,6 +145,22 @@ Kalau sertifikat sudah ada:
 Lalu PASTIKAN situs lain di server ini masih hidup — bandingkan dengan catatan
 dari langkah 1. Ini bagian yang paling penting.
 
+### 7b. (Opsional) Isi konten demo
+
+Bila pemilik proyek meminta konten demo lebih dulu agar tampilan dapat dinilai
+sebelum konten asli tersedia:
+
+    docker compose -p sbk -f docker-compose.yml -f docker-compose.app2.yml \
+      --profile tools run --rm -e ALLOW_DEMO_SEED=yes seed
+
+Perintah ini MENGHAPUS seluruh konten yang ada sebelum mengisi ulang; akun
+pengguna tidak disentuh. Jangan menjalankannya lagi setelah tim mulai
+memasukkan konten asli.
+
+Script juga menyalakan sakelar `noIndex` secara otomatis agar konten demo tidak
+diindeks mesin pencari. Sampaikan ke pemilik proyek bahwa sakelar itu harus
+dimatikan lewat Pengaturan → SEO Bawaan setelah konten asli masuk.
+
 ### 8. Buat akun admin pertama
 
 Buka https://sabhumikaryabarito.com/admin di peramban. Payload akan meminta

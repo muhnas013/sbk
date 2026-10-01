@@ -21,6 +21,7 @@
     "migrate": "payload migrate",
     "migrate:create": "payload migrate:create",
     "seed": "tsx --env-file=.env src/scripts/seed.ts",
+    "seed:container": "tsx src/scripts/seed.ts",
     "prepare": "husky",
     "purge:applications": "tsx --env-file=.env src/scripts/purge-applications.ts",
     "verify:contact": "tsx --env-file=.env src/scripts/verify-contact.ts"

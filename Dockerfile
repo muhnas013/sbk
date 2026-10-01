@@ -27,6 +27,11 @@ RUN npm run generate:importmap && npm run build
 FROM node:22-alpine AS migrator
 WORKDIR /app
 
+# Sharp merender teks SVG lewat fontconfig. Tanpa font terpasang, teks itu
+# hilang diam-diam — termasuk watermark "CONTOH" pada gambar dokumen legalitas
+# demo, yang justru menjadi penanda bahwa dokumen itu bukan dokumen asli.
+RUN apk add --no-cache fontconfig ttf-dejavu
+
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/package.json ./package.json

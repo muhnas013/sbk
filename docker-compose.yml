@@ -35,6 +35,33 @@ services:
       NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?NEXT_PUBLIC_SERVER_URL wajib diisi}
     networks: [internal]
 
+  # Mengisi konten demo. Tidak pernah berjalan sendiri — hanya lewat:
+  #   docker compose --profile tools run --rm seed
+  # Memakai image `migrator` karena CLI dan berkas sumber tidak ikut ke image
+  # runtime, dan ikut memasang volume media agar gambar yang diunggah script
+  # ini tersimpan di tempat yang sama dengan yang dibaca aplikasi.
+  seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+    profiles: ['tools']
+    restart: 'no'
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URI: postgres://${POSTGRES_USER:-sbk}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-sbk}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?PAYLOAD_SECRET wajib diisi}
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?NEXT_PUBLIC_SERVER_URL wajib diisi}
+      PAYLOAD_MEDIA_DIR: /app/media
+      ALLOW_DEMO_SEED: ${ALLOW_DEMO_SEED:-}
+    volumes:
+      - media:/app/media
+    command: ['npm', 'run', 'seed:container']
+    networks: [internal]
+
   app:
     build:
       context: .

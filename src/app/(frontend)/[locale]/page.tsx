@@ -5,6 +5,7 @@ import { CertificationStrip } from '@/components/sections/certification-strip'
 import { ClientLogos } from '@/components/sections/client-logos'
 import { CtaBanner } from '@/components/sections/cta-banner'
 import { DivisionGrid } from '@/components/sections/division-grid'
+import { EmptyHomepage } from '@/components/sections/empty-homepage'
 import { FeaturedProjects } from '@/components/sections/featured-projects'
 import { Hero } from '@/components/sections/hero'
 import { LatestPosts } from '@/components/sections/latest-posts'
@@ -86,6 +87,22 @@ const HomePage = async ({ params }: { params: Promise<{ locale: string }> }) => 
       }),
       findPublished<Post>('posts', { locale, limit: 3, sort: '-publishedAt' }),
     ])
+
+  // Situs yang baru dipasang belum punya konten apa pun. Dibanding
+  // menampilkan beranda yang kosong melompong, tunjukkan arahan ke panel admin.
+  const hasAnyContent =
+    Boolean(homepage.heroHeading) ||
+    Boolean(homepage.aboutHeading) ||
+    Boolean(homepage.ctaHeading) ||
+    (homepage.stats?.length ?? 0) > 0 ||
+    divisions.docs.length > 0 ||
+    projects.docs.length > 0 ||
+    certifications.length > 0 ||
+    testimonials.length > 0 ||
+    clients.length > 0 ||
+    posts.docs.length > 0
+
+  if (!hasAnyContent) return <EmptyHomepage locale={locale} />
 
   const configured = homepage.sections?.filter((section) => section.enabled) ?? []
   const order =

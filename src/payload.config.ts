@@ -52,6 +52,10 @@ export default buildConfig({
     user: Users.slug,
     components: {
       beforeDashboard: ['@/components/admin/DashboardStats#DashboardStats'],
+      graphics: {
+        Icon: '@/components/admin/Icon#Icon',
+        Logo: '@/components/admin/Logo#Logo',
+      },
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -60,6 +64,11 @@ export default buildConfig({
       titleSuffix: ' — Admin Sabhumi Karya Barito',
       description: 'Panel administrasi website PT Sabhumi Karya Barito',
     },
+    /* Panel dikunci ke tema terang. Tanpa ini Payload mengikuti preferensi
+       sistem lewat header `Sec-CH-Prefers-Color-Scheme`, sehingga pemakai
+       dengan desktop bertema gelap mendapat panel gelap. Ubah ke 'all' untuk
+       mengembalikan pilihan terang/gelap per pengguna. */
+    theme: 'light',
     dateFormat: 'd MMMM yyyy',
     livePreview: {
       breakpoints: [...PREVIEW_BREAKPOINTS],

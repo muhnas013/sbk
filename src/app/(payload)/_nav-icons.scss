@@ -1,0 +1,114 @@
+/* ---------------------------------------------------------------------------
+   Ikon menu navigasi panel admin
+
+   Payload tidak menyediakan pengaturan ikon per koleksi, dan mengganti
+   komponen `Nav` berarti menulis ulang pengelompokan, pelipatan, hak akses,
+   dan penanda halaman aktif — banyak kode untuk dipelihara setiap kali
+   Payload naik versi.
+
+   Jalan yang dipakai di sini murni CSS: tiap tautan dikenali dari `id`-nya
+   (`nav-<slug>` untuk koleksi, `nav-global-<slug>` untuk global), lalu
+   gambarnya dipasang sebagai `mask` di `::before`. `id` dipakai, bukan `href`,
+   karena item halaman yang sedang dibuka dirender Payload sebagai `div` tanpa
+   `href` — ikonnya akan hilang persis pada item yang paling perlu terlihat. Karena masker hanya
+   memakai bentuk dan warnanya datang dari `background-color: currentColor`,
+   ikon ikut berubah biru saat disorot maupun saat halamannya terbuka — tanpa
+   perlu dua berkas gambar.
+
+   Gambar ditulis sebagai `data:` URI, bukan berkas terpisah, supaya tidak ada
+   permintaan jaringan tambahan untuk ikon sekecil ini. Semuanya digambar
+   dengan gaya seragam: kotak 24×24, garis tebal 2, ujung membulat.
+   --------------------------------------------------------------------------- */
+
+@use 'sass:map';
+
+$svg-open: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>";
+$svg-close: '</svg>';
+
+/* Kunci peta adalah `id` tiap item navigasi, tanpa awalan `nav-`. */
+$nav-icons: (
+  // --- Profil Perusahaan ---
+  'divisions': "<path d='M12 3 3 8l9 5 9-5z'/><path d='m3 13 9 5 9-5'/>",
+  'services':
+    "<rect x='7' y='3' width='10' height='4' rx='1'/><path d='M9 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3'/><path d='m9 14 2 2 4-4'/>",
+  'team':
+    "<circle cx='9' cy='8' r='3'/><path d='M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6'/><path d='M16 5.5a3 3 0 0 1 0 5.8'/><path d='M18 14.3c1.8.9 3 2.6 3 5.7'/>",
+  'clients':
+    "<rect x='4' y='3' width='16' height='18' rx='2'/><path d='M9 8h2'/><path d='M13 8h2'/><path d='M9 12h2'/><path d='M13 12h2'/><path d='M10 21v-4h4v4'/>",
+  'testimonials':
+    "<path d='M21 14a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z'/><path d='M9 9h.01'/><path d='M13 9h.01'/>",
+  'certifications': "<circle cx='12' cy='9' r='5'/><path d='m8.5 13.5-1.5 7 5-3 5 3-1.5-7'/>",
+  // --- Proyek ---
+  'projects': "<path d='M3 18h18'/><path d='M6 18v-4a6 6 0 0 1 12 0v4'/><path d='M10 8V5h4v3'/>",
+  'project-categories':
+    "<path d='M4 20a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2z'/>",
+  // --- Berita ---
+  'posts':
+    "<rect x='3' y='4' width='18' height='16' rx='2'/><path d='M7 9h7'/><path d='M7 13h10'/><path d='M7 17h6'/>",
+  'post-categories': "<path d='M3 3h8l10 10-8 8L3 11z'/><circle cx='7.5' cy='7.5' r='1.5'/>",
+  // --- Karier ---
+  'jobs':
+    "<rect x='2' y='7' width='20' height='14' rx='2'/><path d='M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2'/>",
+  'job-applications':
+    "<circle cx='9' cy='8' r='3.5'/><path d='M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6'/><path d='M18 8v6'/><path d='M15 11h6'/>",
+  // --- Konten ---
+  'pages':
+    "<path d='M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z'/><path d='M14 3v5h5'/><path d='M9 13h6'/><path d='M9 17h4'/>",
+  'documents': "<path d='M12 3v12'/><path d='m7 11 5 5 5-5'/><path d='M4 20h16'/>",
+  'global-homepage':
+    "<path d='M3 10.5 12 3l9 7.5'/><path d='M5 9.5V20h14V9.5'/><path d='M10 20v-6h4v6'/>",
+  'global-about': "<circle cx='12' cy='12' r='9'/><path d='M12 11v6'/><path d='M12 7.5h.01'/>",
+  // --- Pesan ---
+  'contact-submissions':
+    "<rect x='2' y='4' width='20' height='16' rx='2'/><path d='m3 6 9 7 9-7'/>",
+  // --- Sistem ---
+  'media':
+    "<rect x='3' y='3' width='18' height='18' rx='2'/><circle cx='8.5' cy='8.5' r='1.5'/><path d='m3 17 5-5 4 4 3-3 6 6'/>",
+  'users': "<circle cx='12' cy='8' r='4'/><path d='M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'/>",
+  'activity-logs': "<path d='M3 12a9 9 0 1 0 3-6.7'/><path d='M3 4v5h5'/><path d='M12 7v5l3.5 2'/>",
+  // --- Pengaturan ---
+  'redirects':
+    "<path d='M7 7h14'/><path d='m18 4 3 3-3 3'/><path d='M17 17H3'/><path d='m6 14-3 3 3 3'/>",
+  'global-site-settings':
+    "<path d='M4 6h16'/><path d='M4 12h16'/><path d='M4 18h16'/><circle cx='9' cy='6' r='2'/><circle cx='15' cy='12' r='2'/><circle cx='9' cy='18' r='2'/>",
+  'global-navigation': "<path d='M4 6h16'/><path d='M4 12h12'/><path d='M4 18h8'/>",
+  'global-seo-defaults': "<circle cx='11' cy='11' r='7'/><path d='m20 20-4.3-4.3'/>"
+);
+
+@layer payload {
+  .nav__link {
+    gap: 10px;
+
+    /* Cadangan untuk koleksi yang ditambahkan nanti dan belum ada di peta:
+       sebuah titik netral, bukan kotak kosong yang tampak rusak. */
+    --sbk-nav-icon: url("#{$svg-open}<circle cx='12' cy='12' r='3'/>#{$svg-close}");
+
+    &::before {
+      content: '';
+      flex-shrink: 0;
+      width: 17px;
+      height: 17px;
+      background-color: currentColor;
+      -webkit-mask: var(--sbk-nav-icon) center / contain no-repeat;
+      mask: var(--sbk-nav-icon) center / contain no-repeat;
+      opacity: 0.65;
+      transition: opacity 160ms var(--sbk-ease);
+    }
+
+    &:hover::before,
+    &:focus-visible::before {
+      opacity: 1;
+    }
+  }
+
+  /* Halaman yang sedang dibuka: ikonnya ikut pekat seperti teksnya. */
+  .nav__link:has(.nav__link-indicator)::before {
+    opacity: 1;
+  }
+
+  @each $id, $icon in $nav-icons {
+    .nav__link##{'nav-' + $id} {
+      --sbk-nav-icon: url('#{$svg-open}#{$icon}#{$svg-close}');
+    }
+  }
+}

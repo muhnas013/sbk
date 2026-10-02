@@ -1,52 +1,154 @@
-.sbk-dashboard {
-  margin-bottom: 2rem;
+/* Ringkasan di atas dasbor. Warna diambil dari token tema panel
+   (`src/app/(payload)/custom.scss`) supaya ikut tema terang maupun gelap. */
+@layer payload {
+  .sbk-dashboard {
+    margin-bottom: 2rem;
 
-  &__grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-  }
-
-  &__card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1.25rem;
-    border: 1px solid var(--theme-elevation-150);
-    background: var(--theme-elevation-50);
-    text-decoration: none;
-    color: inherit;
-    transition: border-color 150ms ease;
-
-    &:hover {
-      border-color: var(--theme-elevation-400);
+    &__grid {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
     }
 
-    &--alert {
-      border-color: #b8873a;
-      background: rgba(184, 135, 58, 0.08);
+    /* Setiap kartu memakai satu warna dari palet pendamping. Kelas warnanya
+       hanya mengisi tiga variabel ini; seluruh aturan di bawah membacanya,
+       jadi menambah warna baru cukup satu blok. */
+    &__card--blue {
+      --card-tone: var(--sbk-tone-blue);
+      --card-tone-light: var(--sbk-tone-blue-light);
+      --card-tone-surface: var(--sbk-tone-blue-surface);
+    }
+
+    &__card--teal {
+      --card-tone: var(--sbk-tone-teal);
+      --card-tone-light: var(--sbk-tone-teal-light);
+      --card-tone-surface: var(--sbk-tone-teal-surface);
+    }
+
+    &__card--amber {
+      --card-tone: var(--sbk-tone-amber);
+      --card-tone-light: var(--sbk-tone-amber-light);
+      --card-tone-surface: var(--sbk-tone-amber-surface);
+    }
+
+    &__card--indigo {
+      --card-tone: var(--sbk-tone-indigo);
+      --card-tone-light: var(--sbk-tone-indigo-light);
+      --card-tone-surface: var(--sbk-tone-indigo-surface);
+    }
+
+    &__card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 1.15rem 1.25rem;
+      overflow: hidden;
+      border: 1px solid var(--theme-elevation-100);
+      border-radius: var(--style-radius-l);
+      /* Semburat warna di sudut kanan atas memberi kedalaman tanpa
+         mengurangi kontras angka di sisi kiri. */
+      background:
+        radial-gradient(120% 120% at 100% 0%, var(--card-tone-surface), transparent 62%),
+        var(--theme-elevation-0);
+      text-decoration: none;
+      color: inherit;
+      animation: sbk-rise 460ms var(--sbk-ease) both;
+      transition:
+        border-color 180ms var(--sbk-ease),
+        transform 180ms var(--sbk-ease),
+        box-shadow 180ms var(--sbk-ease);
+
+      /* Garis warna di tepi atas: selalu tampak, menguat saat kartu disorot. */
+      &::before {
+        content: '';
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--card-tone), var(--card-tone-light));
+        opacity: 0.6;
+        transition: opacity 260ms var(--sbk-ease);
+      }
+
+      &:nth-child(1) {
+        animation-delay: 0ms;
+      }
+
+      &:nth-child(2) {
+        animation-delay: 60ms;
+      }
+
+      &:nth-child(3) {
+        animation-delay: 120ms;
+      }
+
+      &:nth-child(4) {
+        animation-delay: 180ms;
+      }
+
+      &:hover {
+        border-color: var(--card-tone);
+        transform: translateY(-2px);
+        box-shadow: var(--sbk-card-shadow);
+      }
+
+      &:hover::before {
+        opacity: 1;
+      }
+
+      /* Kartu yang menunggu tindakan: warnanya sendiri dipertegas, bukan
+         diganti, supaya kartu tetap dikenali sebagai kartu yang sama. */
+      &--alert {
+        border-color: var(--card-tone);
+        background:
+          radial-gradient(120% 120% at 100% 0%, var(--card-tone-surface), transparent 55%),
+          var(--card-tone-surface);
+
+        &::before {
+          opacity: 1;
+        }
+      }
+    }
+
+    &__value {
+      font-family: var(--font-heading);
+      font-size: 2.1rem;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--card-tone, var(--theme-elevation-900));
+    }
+
+    &__label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--theme-elevation-500);
+    }
+
+    &__notice {
+      margin-top: 1rem;
+      padding: 0.9rem 1.15rem;
+      border-inline-start: 3px solid var(--sbk-tone-amber);
+      border-radius: var(--style-radius-m);
+      background: var(--sbk-tone-amber-surface);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--theme-elevation-800);
+      animation: sbk-rise 460ms var(--sbk-ease) 240ms both;
     }
   }
 
-  &__value {
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1.1;
-  }
+  @media (prefers-reduced-motion: reduce) {
+    .sbk-dashboard__card,
+    .sbk-dashboard__notice {
+      animation: none;
+    }
 
-  &__label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--theme-elevation-600);
-  }
-
-  &__notice {
-    margin-top: 1rem;
-    padding: 1rem 1.25rem;
-    border-left: 3px solid #b8873a;
-    background: rgba(184, 135, 58, 0.08);
-    font-size: 0.85rem;
-    line-height: 1.6;
+    .sbk-dashboard__card:hover {
+      transform: none;
+    }
   }
 }

@@ -40,19 +40,29 @@ export const DashboardStats = async ({ payload, user }: ServerProps) => {
     }),
   ])
 
+  /* `tone` memilih warna kartu lewat kelas; daftar warnanya ada di
+     `dashboard-stats.scss`. Satu warna per jenis informasi supaya kartu
+     dikenali sekilas tanpa membaca labelnya. */
   const cards = [
-    { label: 'Proyek', value: projects.totalDocs, href: '/admin/collections/projects' },
-    { label: 'Berita', value: posts.totalDocs, href: '/admin/collections/posts' },
+    {
+      label: 'Proyek',
+      value: projects.totalDocs,
+      href: '/admin/collections/projects',
+      tone: 'blue',
+    },
+    { label: 'Berita', value: posts.totalDocs, href: '/admin/collections/posts', tone: 'indigo' },
     {
       label: 'Pesan Belum Dibaca',
       value: unreadMessages.totalDocs,
       href: '/admin/collections/contact-submissions',
+      tone: 'amber',
       highlight: unreadMessages.totalDocs > 0,
     },
     {
       label: 'Lamaran Baru',
       value: newApplications.totalDocs,
       href: '/admin/collections/job-applications',
+      tone: 'teal',
       highlight: newApplications.totalDocs > 0,
     },
   ]
@@ -64,7 +74,9 @@ export const DashboardStats = async ({ payload, user }: ServerProps) => {
           <Link
             key={card.label}
             href={card.href}
-            className={`sbk-dashboard__card${card.highlight ? ' sbk-dashboard__card--alert' : ''}`}
+            className={`sbk-dashboard__card sbk-dashboard__card--${card.tone}${
+              card.highlight ? ' sbk-dashboard__card--alert' : ''
+            }`}
           >
             <span className="sbk-dashboard__value">{card.value}</span>
             <span className="sbk-dashboard__label">{card.label}</span>

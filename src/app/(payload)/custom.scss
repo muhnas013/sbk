@@ -1,15 +1,610 @@
-/* Penyesuaian tampilan panel admin agar selaras dengan identitas perusahaan. */
-:root {
-  --theme-elevation-0: #ffffff;
-  --color-base-800: #141414;
+/* ---------------------------------------------------------------------------
+   Tema panel admin — PT Sabhumi Karya Barito
+
+   Payload membungkus seluruh gayanya dalam `@layer payload-default` dan
+   mengurutkan lapisan sebagai `@layer payload-default, payload`. Penyesuaian
+   di sini WAJIB berada dalam `@layer payload` supaya menang atas bawaan tanpa
+   perlu menaikkan kekhususan selektor.
+
+   Jangan menimpa `--theme-*` di `:root` tanpa lapisan: deklarasi tak berlapis
+   mengalahkan seluruh lapisan, termasuk `html[data-theme='dark']` milik
+   Payload, sehingga satu baris saja sudah cukup membuat tema gelap tampil
+   dengan latar terang dan teks putih yang tak terbaca.
+
+   Yang ditimpa di sini hanyalah tangga warna dasar `--color-base-*`. Payload
+   menurunkan `--theme-elevation-*` darinya — menaik untuk tema terang,
+   terbalik untuk tema gelap — jadi satu tangga melayani kedua tema dengan
+   kontras yang tetap benar.
+
+   Pembagian peran warna:
+   - BIRU  — seluruh aksi: tombol utama, tautan, keadaan fokus, menu aktif.
+   - EMAS  — identitas perusahaan: lambang, dan sorotan yang menunggu tindakan.
+   Pembagian ini sengaja tegas supaya biru selalu berarti "dapat ditekan".
+   --------------------------------------------------------------------------- */
+
+@use './nav-icons';
+
+/* Gerak dibatasi pada `transform`, `opacity`, dan `filter` saja supaya
+   dikerjakan compositor dan tidak memicu layout ulang. Seluruhnya dimatikan
+   bagi pengguna yang meminta pengurangan animasi — lihat blok di bagian akhir. */
+
+@keyframes sbk-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-.template-default__wrap,
-.template-minimal {
-  font-feature-settings: 'cv11', 'ss01';
+/* Gradasi latar bergeser perlahan; jarak geser sengaja kecil agar terbaca
+   sebagai cahaya yang hidup, bukan sebagai animasi yang menarik perhatian. */
+@keyframes sbk-mesh-drift {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1.04);
+  }
+  to {
+    transform: translate3d(2%, 1.5%, 0) scale(1.1);
+  }
 }
 
-/* Turunkan intensitas warna aksen bawaan Payload ke aksen perusahaan. */
-[data-theme='light'] {
-  --theme-success-500: #3f7d58;
+@layer payload {
+  :root {
+    /* Tangga netral sejuk. Ujung terang mendekati putih supaya permukaan
+       panel terasa bersih dan warna aksen punya ruang untuk menonjol. */
+    --color-base-0: #ffffff;
+    --color-base-50: #f6f8fb;
+    --color-base-100: #eef1f6;
+    --color-base-150: #e3e8f0;
+    --color-base-200: #d6dde8;
+    --color-base-250: #c8d1de;
+    --color-base-300: #b9c3d3;
+    --color-base-350: #a9b5c7;
+    --color-base-400: #99a6bb;
+    --color-base-450: #8996ae;
+    --color-base-500: #7987a1;
+    --color-base-550: #6a7892;
+    --color-base-600: #5c6a83;
+    --color-base-650: #4f5c74;
+    --color-base-700: #434f65;
+    --color-base-750: #394355;
+    --color-base-800: #2d3748;
+    --color-base-850: #222b3a;
+    --color-base-900: #161d29;
+    --color-base-950: #0b1018;
+    --color-base-1000: #000000;
+
+    /* Biru aksi. 5,1:1 di atas putih — lolos WCAG AA sebagai teks, jadi boleh
+       dipakai untuk tautan di dalam tabel, bukan hanya untuk tombol. */
+    --sbk-accent: #2563eb;
+    --sbk-accent-hover: #1d4ed8;
+    --sbk-accent-contrast: #ffffff;
+    --sbk-accent-surface: rgba(37, 99, 235, 0.08);
+    --sbk-accent-highlight: #60a5fa;
+    --sbk-accent-glow: rgba(37, 99, 235, 0.25);
+    --sbk-ring: rgba(37, 99, 235, 0.22);
+
+    /* Emas perusahaan. Kontrasnya 3,1:1 — cukup untuk lambang dan bidang
+       berwarna, TIDAK cukup untuk teks biasa; teks peringatan memakai
+       `--sbk-tone-amber` yang lebih pekat. */
+    --sbk-brand: #c8841f;
+    --sbk-brand-light: #f0b45c;
+    --sbk-brand-surface: rgba(200, 132, 31, 0.12);
+
+    /* Warna pendamping untuk membedakan kelompok informasi sekilas. Keempatnya
+       lolos WCAG AA (>= 4,5:1) sebagai teks di atas permukaan putih panel.
+         biru 5,1:1 · nila 6,3:1 · toska 5,5:1 · kuning tua 5,1:1 */
+    --sbk-tone-blue: #2563eb;
+    --sbk-tone-blue-light: #60a5fa;
+    --sbk-tone-blue-surface: rgba(37, 99, 235, 0.09);
+
+    --sbk-tone-indigo: #4f46e5;
+    --sbk-tone-indigo-light: #a5b4fc;
+    --sbk-tone-indigo-surface: rgba(79, 70, 229, 0.09);
+
+    --sbk-tone-teal: #0f766e;
+    --sbk-tone-teal-light: #5eead4;
+    --sbk-tone-teal-surface: rgba(15, 118, 110, 0.09);
+
+    --sbk-tone-amber: #b45309;
+    --sbk-tone-amber-light: #fbbf24;
+    --sbk-tone-amber-surface: rgba(180, 83, 9, 0.09);
+
+    /* Permukaan halaman tanpa navigasi. Dipisah per tema karena tangga
+       elevasi Payload terbalik di tema gelap: kartu yang "naik" di tema
+       terang justru harus lebih terang dari latar di tema gelap. */
+    --sbk-minimal-bg: var(--theme-elevation-50);
+    --sbk-minimal-card-bg: var(--theme-elevation-0);
+    --sbk-card-shadow: 0 1px 2px rgba(22, 29, 41, 0.05), 0 12px 32px rgba(22, 29, 41, 0.08);
+    --sbk-panel-shadow: 0 1px 2px rgba(22, 29, 41, 0.04);
+
+    /* Kartu login dibuat tembus pandang agar gradasi latar terbaca samar di
+       baliknya; nilainya harus buram supaya teks tetap kontras. */
+    --sbk-glass-bg: rgba(255, 255, 255, 0.88);
+    --sbk-glass-border: rgba(45, 55, 72, 0.1);
+    --sbk-mesh-1: rgba(96, 165, 250, 0.3);
+    --sbk-mesh-2: rgba(165, 180, 252, 0.28);
+    --sbk-mesh-3: rgba(94, 234, 212, 0.24);
+    --sbk-mesh-4: rgba(240, 180, 92, 0.22);
+    --sbk-grid-line: rgba(45, 55, 72, 0.05);
+
+    /* Sudut membulat lembut, mengikuti rujukan tampilan. */
+    --style-radius-s: 6px;
+    --style-radius-m: 8px;
+    --style-radius-l: 10px;
+
+    --sbk-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+    --accessibility-outline: 2px solid var(--sbk-accent);
+
+    --font-body:
+      var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+      Arial, sans-serif;
+    --font-heading: var(--font-jakarta), var(--font-body);
+  }
+
+  /* Panel dikunci ke tema terang di `payload.config.ts`, jadi blok ini tidak
+     aktif. Tetap dipelihara supaya tema gelap langsung benar bila konfigurasi
+     itu dikembalikan ke 'all'. */
+  html[data-theme='dark'] {
+    --sbk-accent: #60a5fa;
+    --sbk-accent-hover: #93c5fd;
+    --sbk-accent-contrast: #161d29;
+    --sbk-accent-surface: rgba(96, 165, 250, 0.14);
+    --sbk-accent-highlight: #bfdbfe;
+    --sbk-accent-glow: rgba(96, 165, 250, 0.26);
+    --sbk-ring: rgba(96, 165, 250, 0.3);
+    --sbk-brand: #f0b45c;
+    --sbk-brand-light: #f7d49b;
+    --sbk-brand-surface: rgba(240, 180, 92, 0.14);
+    --sbk-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.45);
+    --sbk-panel-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --sbk-minimal-bg: var(--theme-elevation-0);
+    --sbk-minimal-card-bg: var(--theme-elevation-50);
+    --sbk-glass-bg: rgba(34, 43, 58, 0.8);
+    --sbk-glass-border: rgba(255, 255, 255, 0.1);
+    --sbk-grid-line: rgba(255, 255, 255, 0.05);
+    --sbk-tone-blue: #60a5fa;
+    --sbk-tone-blue-light: #bfdbfe;
+    --sbk-tone-blue-surface: rgba(96, 165, 250, 0.14);
+    --sbk-tone-indigo: #a5b4fc;
+    --sbk-tone-indigo-light: #c7d2fe;
+    --sbk-tone-indigo-surface: rgba(165, 180, 252, 0.14);
+    --sbk-tone-teal: #5eead4;
+    --sbk-tone-teal-light: #99f6e4;
+    --sbk-tone-teal-surface: rgba(94, 234, 212, 0.14);
+    --sbk-tone-amber: #fbbf24;
+    --sbk-tone-amber-light: #fde68a;
+    --sbk-tone-amber-surface: rgba(251, 191, 36, 0.14);
+  }
+
+  html {
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.015em;
+    color: var(--theme-elevation-900);
+  }
+
+  /* -------------------------------------------------------------------------
+     Kerangka: navigasi dan kepala panel putih, isi halaman berlatar sejuk
+     ------------------------------------------------------------------------- */
+
+  .nav {
+    background: var(--theme-elevation-0);
+    border-inline-end: 1px solid var(--theme-elevation-100);
+  }
+
+  .app-header {
+    background: var(--theme-elevation-0);
+    border-block-end: 1px solid var(--theme-elevation-100);
+  }
+
+  /* Latar isi halaman dibedakan dari navigasi, supaya tabel dan panel di
+     atasnya terbaca sebagai lembar tersendiri. */
+  .template-default__wrap {
+    background-color: var(--theme-elevation-50);
+  }
+
+  /* Dasbor bawaan berpadding `0 40px` — tanpa padding atas, isinya menempel
+     pada kepala panel. */
+  .dashboard {
+    padding-block-start: calc(var(--base) * 1.2);
+  }
+
+  /* -------------------------------------------------------------------------
+     Kontrol
+     ------------------------------------------------------------------------- */
+
+  .btn {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .btn--style-primary {
+    --bg-color: var(--sbk-accent);
+    --color: var(--sbk-accent-contrast);
+    --hover-bg: var(--sbk-accent-hover);
+    --hover-color: var(--sbk-accent-contrast);
+
+    box-shadow: 0 1px 2px rgba(22, 29, 41, 0.08);
+    transition:
+      transform 180ms var(--sbk-ease),
+      box-shadow 180ms var(--sbk-ease),
+      background-color 180ms var(--sbk-ease);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px var(--sbk-accent-glow);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(22, 29, 41, 0.12);
+    }
+
+    /* Tombol mati tidak boleh tampak dapat ditekan. */
+    &.btn--disabled {
+      box-shadow: none;
+
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+
+  .btn--style-secondary {
+    --btn-border: 1px solid var(--theme-elevation-200);
+    --hover-color: var(--sbk-accent);
+    --hover-btn-border: 1px solid var(--sbk-accent);
+  }
+
+  /* Tombol "buat baru" adalah aksi utama tiap daftar, jadi diberi warna aksi
+     penuh — bukan pil kelabu seperti bawaannya. */
+  .list-create-new-doc__create-new-button {
+    --color: var(--sbk-accent-contrast);
+    --bg-color: var(--sbk-accent);
+    --hover-bg: var(--sbk-accent-hover);
+    --hover-color: var(--sbk-accent-contrast);
+
+    border-radius: var(--style-radius-s);
+    box-shadow: 0 1px 2px rgba(22, 29, 41, 0.08);
+    transition:
+      transform 180ms var(--sbk-ease),
+      box-shadow 180ms var(--sbk-ease);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px var(--sbk-accent-glow);
+    }
+  }
+
+  /* Cincin fokus seragam untuk seluruh jenis masukan, termasuk ReactSelect
+     yang menandai fokusnya lewat kelas, bukan pseudo-class. */
+  input:not([type='checkbox']):not([type='radio']):focus,
+  textarea:focus,
+  .rs__control--is-focused {
+    border-color: var(--sbk-accent);
+    box-shadow: 0 0 0 3px var(--sbk-ring);
+    outline: none;
+  }
+
+  /* Kotak pencarian berbentuk kapsul, mengikuti rujukan tampilan. Latarnya
+     ditegaskan karena isi halaman kini berlatar sejuk, bukan putih. */
+  .search-filter__input {
+    border-radius: 999px;
+    background: var(--theme-elevation-0);
+    border: 1px solid var(--theme-elevation-150);
+  }
+
+  /* Label relasi dan kategori: keping kelabu lembut, bukan kotak bergaris. */
+  .pill--style-light,
+  .pill--style-white {
+    background: var(--theme-elevation-100);
+    border-color: transparent;
+  }
+
+  /* -------------------------------------------------------------------------
+     Navigasi
+     ------------------------------------------------------------------------- */
+
+  /* Padding mendatar navigasi sengaja dibiarkan apa adanya: Payload
+     mengecilkannya lewat media query pada layar sempit, dan menimpanya di
+     sini akan mematikan penyesuaian itu. Kelegaan diambil dari tinggi baris
+     dan jarak antar kelompok saja.
+
+     Bawaan Payload memberi tiap kelompok jarak bawah 10px dan judulnya 5px —
+     terlalu rapat untuk menu sepanjang ini, karena batas antar kelompok jadi
+     tak terbaca. Keduanya dilonggarkan supaya kelompok terbaca sebagai blok. */
+  .nav-group {
+    margin-bottom: 22px;
+  }
+
+  /* Judul kelompok: kecil, kapital, kelabu — penanda struktur, bukan aksen. */
+  .nav-group__toggle {
+    margin-bottom: 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--theme-elevation-400);
+    transition: color 160ms var(--sbk-ease);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--theme-elevation-700);
+    }
+  }
+
+  /* Tinggi baris bawaan hanya 25px dan rapat tanpa jarak. Padding tegak
+     dinaikkan agar tiap baris nyaman disentuh, dan margin mendatar negatif
+     mengimbangi padding mendatar supaya teksnya tetap sejajar dengan judul
+     kelompok sementara latar sorotnya melebar ke kiri dan kanan. */
+  .nav__link {
+    margin-block: 1px;
+    margin-inline-start: -10px;
+    padding-block: 7px;
+    padding-inline-start: 10px;
+    border-radius: var(--style-radius-s);
+    transition:
+      background-color 160ms var(--sbk-ease),
+      color 160ms var(--sbk-ease);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--sbk-accent);
+      background-color: var(--sbk-accent-surface);
+      text-decoration: none;
+    }
+  }
+
+  .nav a.nav__link:hover,
+  .nav a.nav__link:focus-visible {
+    text-decoration: none;
+  }
+
+  /* Halaman yang sedang dibuka. */
+  .nav__link:has(.nav__link-indicator) {
+    color: var(--sbk-accent);
+    background-color: var(--sbk-accent-surface);
+  }
+
+  /* Penanda diposisikan terhadap kotak tautan, yang baru saja digeser 10px
+     ke kiri — nilai bawaannya (-20px) ikut bergeser dan keluar dari navigasi,
+     jadi harus dikurangi sebesar pergeseran itu. */
+  .nav__link-indicator {
+    inset-inline-start: -10px;
+    width: 3px;
+    height: 18px;
+    border-radius: 3px;
+    background: var(--sbk-accent);
+  }
+
+  /* -------------------------------------------------------------------------
+     Daftar dokumen
+     ------------------------------------------------------------------------- */
+
+  /* Tabel berdiri sebagai lembar putih di atas latar sejuk. */
+  .table {
+    background: var(--theme-elevation-0);
+    border: 1px solid var(--theme-elevation-100);
+    border-radius: var(--style-radius-m);
+    box-shadow: var(--sbk-panel-shadow);
+  }
+
+  .table thead {
+    color: var(--theme-elevation-500);
+  }
+
+  /* Jarak huruf sengaja kecil: judul kolom berhuruf kapital sudah melebar
+     sendiri, dan tiap tambahan lebarnya merampas ruang kolom nama dokumen. */
+  .table thead th {
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-block-end: 1px solid var(--theme-elevation-100);
+  }
+
+  .table tbody tr {
+    transition: background-color 140ms var(--sbk-ease);
+
+    &:hover {
+      background-color: var(--theme-elevation-50);
+    }
+  }
+
+  /* Judul dokumen pada tiap baris adalah tautan. Warnanya sendiri sudah
+     menandai itu, jadi garis bawah bawaan hanya muncul saat disorot. */
+  .table tbody td a {
+    color: var(--sbk-accent);
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--sbk-accent-hover);
+      text-decoration: underline;
+    }
+  }
+
+  /* -------------------------------------------------------------------------
+     Halaman tanpa navigasi: login, buat pengguna pertama, lupa kata sandi
+     ------------------------------------------------------------------------- */
+
+  .template-minimal {
+    position: relative;
+    overflow: hidden;
+    /* Membentuk konteks penumpukan sendiri, supaya kedua lapis hiasan
+       ber-`z-index` negatif tetap berada di atas latar elemen ini dan di
+       bawah kartunya. */
+    isolation: isolate;
+    background: var(--sbk-minimal-bg);
+
+    /* Lapis pertama: empat pusat cahaya yang saling berbaur. */
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -25%;
+      z-index: -1;
+      background:
+        radial-gradient(36% 40% at 18% 22%, var(--sbk-mesh-1), transparent 70%),
+        radial-gradient(34% 38% at 80% 14%, var(--sbk-mesh-2), transparent 70%),
+        radial-gradient(42% 44% at 70% 84%, var(--sbk-mesh-3), transparent 70%),
+        radial-gradient(38% 40% at 14% 82%, var(--sbk-mesh-4), transparent 70%);
+      animation: sbk-mesh-drift 26s ease-in-out infinite alternate;
+    }
+
+    /* Lapis kedua: kisi halus bernuansa gambar kerja, diredupkan ke tepi
+       supaya tidak bersaing dengan kartu di tengah. */
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(var(--sbk-grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--sbk-grid-line) 1px, transparent 1px);
+      background-size: 64px 64px;
+      -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 0%, transparent 70%);
+      mask-image: radial-gradient(circle at 50% 45%, #000 0%, transparent 70%);
+    }
+  }
+
+  .template-minimal--width-normal .template-minimal__wrap {
+    position: relative;
+    overflow: hidden;
+    max-width: 25rem;
+    padding: calc(var(--base) * 1.75) calc(var(--base) * 1.5);
+    border: 1px solid var(--sbk-glass-border);
+    border-radius: calc(var(--style-radius-l) * 1.4);
+    background: var(--sbk-glass-bg);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.4);
+    box-shadow: var(--sbk-card-shadow);
+    animation: sbk-rise 560ms var(--sbk-ease) both;
+
+    /* Garis gradasi tipis di tepi atas kartu. */
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline: 0;
+      height: 3px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--sbk-accent),
+        var(--sbk-accent-highlight),
+        transparent
+      );
+    }
+  }
+
+  .login__brand {
+    margin-bottom: calc(var(--base) * 1.25);
+    animation: sbk-rise 560ms var(--sbk-ease) 80ms both;
+  }
+
+  /* Isian muncul berurutan, jeda cukup pendek agar terasa sebagai satu
+     gerakan dan tidak memperlambat orang yang hendak langsung mengetik. */
+  .login__form .field-type {
+    animation: sbk-rise 500ms var(--sbk-ease) both;
+
+    &:nth-of-type(1) {
+      animation-delay: 140ms;
+    }
+
+    &:nth-of-type(2) {
+      animation-delay: 200ms;
+    }
+  }
+
+  /* Tautan "lupa kata sandi" bawaan adalah anak langsung formulir tanpa kelas
+     sendiri, dan tanpa jarak ia menempel pada tombol kirim. */
+  .login__form > a {
+    display: inline-block;
+    margin-block: calc(var(--base) * 0.3) calc(var(--base) * 0.15);
+    font-size: 0.85rem;
+    color: var(--sbk-accent);
+    text-decoration: none;
+    animation: sbk-rise 500ms var(--sbk-ease) 230ms both;
+    transition: color 160ms var(--sbk-ease);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--sbk-accent-hover);
+      text-decoration: underline;
+    }
+  }
+
+  .login__form .form-submit {
+    margin-top: calc(var(--base) * 0.35);
+    animation: sbk-rise 500ms var(--sbk-ease) 290ms both;
+  }
+
+  .login__form .field-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--theme-elevation-600);
+  }
+
+  .login__form .form-submit .btn {
+    width: 100%;
+    margin: 0;
+  }
+
+  .login__form .form-submit .btn__content {
+    justify-content: center;
+  }
+
+  /* -------------------------------------------------------------------------
+     Kartu pintasan koleksi di dasbor
+     ------------------------------------------------------------------------- */
+
+  .card {
+    border-radius: var(--style-radius-m);
+    transition:
+      border-color 180ms var(--sbk-ease),
+      transform 180ms var(--sbk-ease),
+      box-shadow 180ms var(--sbk-ease);
+
+    &:hover {
+      border-color: var(--sbk-accent);
+      transform: translateY(-2px);
+      box-shadow: var(--sbk-card-shadow);
+    }
+  }
+
+  /* -------------------------------------------------------------------------
+     Pengurangan gerak
+
+     Hanya animasi hias milik tema ini yang dimatikan; transisi bawaan Payload
+     dibiarkan agar perubahan keadaan tetap terbaca.
+     ------------------------------------------------------------------------- */
+
+  @media (prefers-reduced-motion: reduce) {
+    .template-minimal::before,
+    .template-minimal--width-normal .template-minimal__wrap,
+    .login__brand,
+    .login__form .field-type,
+    .login__form > a,
+    .login__form .form-submit {
+      animation: none;
+    }
+
+    .btn--style-primary:hover,
+    .list-create-new-doc__create-new-button:hover,
+    .card:hover {
+      transform: none;
+    }
+  }
 }

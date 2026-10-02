@@ -1,0 +1,62 @@
+/* Lambang dan lockup merek di panel admin. Warna mengikuti token tema di
+   `src/app/(payload)/custom.scss`, jadi ikut menyesuaikan tema terang/gelap. */
+@layer payload {
+  .sbk-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
+    &__mark {
+      flex-shrink: 0;
+      width: 2.75rem;
+      height: 2.75rem;
+      /* Bayangan mengikuti bentuk lambang, bukan kotak pembatasnya. */
+      filter: drop-shadow(0 4px 12px var(--sbk-brand-surface));
+      transition: transform 240ms var(--sbk-ease);
+
+      /* Kotak aksen bergradasi; lambangnya sewarna permukaan kartu sehingga
+         tetap pekat di tema terang maupun gelap tanpa dua versi gambar. */
+      path {
+        fill: var(--sbk-minimal-card-bg, var(--theme-elevation-0));
+      }
+
+      &--small {
+        width: 1.85rem;
+        height: 1.85rem;
+      }
+    }
+
+    &:hover &__mark {
+      transform: scale(1.04) rotate(-2deg);
+    }
+
+    &__text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.12rem;
+      line-height: 1.2;
+    }
+
+    &__name {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--theme-elevation-900);
+    }
+
+    &__tagline {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sbk-accent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sbk-brand:hover .sbk-brand__mark {
+      transform: none;
+    }
+  }
+}

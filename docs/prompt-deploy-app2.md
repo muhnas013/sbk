@@ -161,9 +161,10 @@ Script juga menyalakan sakelar `noIndex` secara otomatis agar konten demo tidak
 diindeks mesin pencari. Sampaikan ke pemilik proyek bahwa sakelar itu harus
 dimatikan lewat Pengaturan → SEO Bawaan setelah konten asli masuk.
 
-Foto demo diunduh dari Wikimedia Commons saat perintah di atas berjalan, jadi
-container butuh akses keluar ke internet. Bila gagal, seeding tetap selesai
-dengan gambar generatif sebagai cadangan. Foto itu berlisensi Creative Commons —
+Foto demo ikut tersimpan di repositori, jadi perintah di atas tidak memerlukan
+akses internet dari dalam container — memang tidak ada, karena jaringan compose
+`internal: true`. Yang penting image `seed` dibangun ulang setelah `git pull`
+supaya fotonya ikut masuk. Foto itu berlisensi Creative Commons —
 pemotretnya tercatat di field Kredit tiap media dan di
 `src/scripts/demo-photos/KREDIT.md`, dan wajib disebut selama foto demo masih
 terpasang. Sampaikan ke pemilik proyek bahwa foto itu harus diganti dokumentasi

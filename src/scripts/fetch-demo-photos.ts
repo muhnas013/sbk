@@ -5,12 +5,16 @@
  *   npm run photos              # unduh yang belum ada
  *   npm run photos -- --force   # unduh ulang semuanya
  *
- * `npm run seed` memanggil fungsi yang sama lebih dulu, jadi biasanya script
- * ini tidak perlu dijalankan sendiri. Berkasnya sengaja TIDAK ikut ke dalam
- * repositori (lihat .gitignore) karena ukurannya belasan megabita dan toh akan
- * diganti foto asli perusahaan. Bila pengunduhan gagal — jaringan mati atau
- * Commons sedang menolak — seeding tetap berjalan memakai gambar generatif di
- * `demo-images.ts` sebagai cadangan.
+ * Hasil unduhannya IKUT ke dalam repositori. Terlihat boros — 12 MB berkas
+ * biner untuk konten yang toh akan diganti — tetapi seeding di server berjalan
+ * pada jaringan compose `internal: true` yang memang tidak punya akses keluar,
+ * jadi mengunduh saat seeding mustahil di sana. Ikut ter-commit juga membuat
+ * hasil seeding sama persis di mana pun dijalankan.
+ *
+ * `npm run seed` memanggil fungsi ini lebih dulu, tetapi ketika seluruh
+ * berkasnya sudah ada — keadaan normal — tidak ada satu pun permintaan
+ * jaringan yang dikirim. Script ini hanya perlu dijalankan sendiri ketika
+ * daftar fotonya berubah.
  */
 import fs from 'node:fs/promises'
 import path from 'node:path'

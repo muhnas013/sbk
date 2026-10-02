@@ -72,10 +72,12 @@ dinilai sebelum konten asli tersedia. Perintah ini **menghapus** seluruh konten
 yang ada (akun pengguna tidak disentuh), dan di produksi menolak berjalan
 kecuali diberi `ALLOW_DEMO_SEED=yes`.
 
-Foto demo tidak disimpan di repositori. Seeding mengunduhnya lebih dulu dari
-Wikimedia Commons ke `src/scripts/demo-photos/` — jadi butuh koneksi internet
-saat pertama kali dijalankan. Bila pengunduhan gagal, seeding tetap tuntas
-memakai gambar generatif sebagai cadangan.
+Foto demonya ada di `src/scripts/demo-photos/` dan **ikut tersimpan di
+repositori**, sehingga seeding tidak memerlukan koneksi internet sama sekali —
+syarat mutlak di server, karena jaringan compose `internal: true` memang tidak
+memberi container akses keluar. Berkasnya dihasilkan `npm run photos`, yang
+mengunduh dari Wikimedia Commons lalu menyelaraskan warnanya; jalankan itu
+hanya bila daftar fotonya berubah.
 
 Foto-foto itu berlisensi Creative Commons: **pemotretnya wajib disebut** selama
 foto masih terpasang. Nama pemotret ikut tersimpan di field Kredit setiap media,

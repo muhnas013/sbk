@@ -59,9 +59,29 @@ admin. Pengguna pertama dibuat lewat halaman `/admin/create-first-user`.
 | `npm run generate:importmap` | Hasilkan ulang import map panel admin                    |
 | `npm run migrate:create`     | Buat berkas migrasi database baru                        |
 | `npm run migrate`            | Terapkan migrasi database                                |
+| `npm run seed`               | Isi konten demo (menghapus konten yang ada lebih dulu)   |
+| `npm run photos`             | Unduh ulang foto demo dari Wikimedia Commons             |
 
 > Di mode pengembangan Payload memakai `push: true` — skema disinkronkan otomatis.
 > Di produksi `push` dimatikan; perubahan skema **wajib** lewat berkas migrasi.
+
+### Konten demo
+
+`npm run seed` mengisi database dengan konten contoh agar tampilan situs dapat
+dinilai sebelum konten asli tersedia. Perintah ini **menghapus** seluruh konten
+yang ada (akun pengguna tidak disentuh), dan di produksi menolak berjalan
+kecuali diberi `ALLOW_DEMO_SEED=yes`.
+
+Foto demo tidak disimpan di repositori. Seeding mengunduhnya lebih dulu dari
+Wikimedia Commons ke `src/scripts/demo-photos/` — jadi butuh koneksi internet
+saat pertama kali dijalankan. Bila pengunduhan gagal, seeding tetap tuntas
+memakai gambar generatif sebagai cadangan.
+
+Foto-foto itu berlisensi Creative Commons: **pemotretnya wajib disebut** selama
+foto masih terpasang. Nama pemotret ikut tersimpan di field Kredit setiap media,
+dan daftar lengkapnya ada di `src/scripts/demo-photos/KREDIT.md`. Ganti seluruh
+foto demo dengan dokumentasi milik perusahaan sebelum peluncuran. Foto tim dan
+testimoni sengaja dibiarkan berupa siluet, bukan wajah orang sungguhan.
 
 ## Struktur Folder
 

@@ -45,3 +45,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# foto demo (diunduh ulang lewat `npm run photos`)
+/src/scripts/demo-photos/*.webp

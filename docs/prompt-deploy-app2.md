@@ -161,6 +161,14 @@ Script juga menyalakan sakelar `noIndex` secara otomatis agar konten demo tidak
 diindeks mesin pencari. Sampaikan ke pemilik proyek bahwa sakelar itu harus
 dimatikan lewat Pengaturan → SEO Bawaan setelah konten asli masuk.
 
+Foto demo diunduh dari Wikimedia Commons saat perintah di atas berjalan, jadi
+container butuh akses keluar ke internet. Bila gagal, seeding tetap selesai
+dengan gambar generatif sebagai cadangan. Foto itu berlisensi Creative Commons —
+pemotretnya tercatat di field Kredit tiap media dan di
+`src/scripts/demo-photos/KREDIT.md`, dan wajib disebut selama foto demo masih
+terpasang. Sampaikan ke pemilik proyek bahwa foto itu harus diganti dokumentasi
+perusahaan sebelum situs dipromosikan.
+
 ### 8. Buat akun admin pertama
 
 Buka https://sabhumikaryabarito.com/admin di peramban. Payload akan meminta

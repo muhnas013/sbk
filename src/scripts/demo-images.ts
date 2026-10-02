@@ -1,24 +1,62 @@
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
+import type { DemoPhotoKey } from './demo-photos'
 
 /**
- * Gambar placeholder untuk konten demo.
+ * Gambar untuk konten demo.
  *
- * Bukan foto, tetapi sengaja dibuat menyerupai fotografi arsitektur dalam hal
- * yang menentukan tampilan halaman: warna gelap bergradien, bentuk geometris
- * bangunan, dan kontras yang mirip. Kotak warna polos bertuliskan label
- * membuat halaman terlihat jauh lebih buruk daripada hasil akhirnya, sehingga
- * tidak berguna untuk menilai desain.
+ * Sebagian besar halaman memakai foto sungguhan dari Wikimedia Commons yang
+ * diunduh `fetch-demo-photos.ts` — lihat `photograph()` di bawah. Gambar
+ * generatif di berkas ini dipakai untuk dua hal yang tidak pantas diisi foto
+ * orang lain: dokumen legalitas dan logo, serta sebagai cadangan ketika foto
+ * gagal diunduh.
+ *
+ * Bentuknya sengaja menyerupai fotografi arsitektur dalam hal yang menentukan
+ * tampilan halaman: warna bergradien, siluet bangunan, dan kontras yang mirip.
+ * Kotak warna polos bertuliskan label membuat halaman terlihat jauh lebih buruk
+ * daripada hasil akhirnya, sehingga tidak berguna untuk menilai desain.
+ *
+ * Seluruh warna mengikuti token pada `src/app/(frontend)/globals.css`: gelap
+ * kecokelatan dengan aksen perunggu, bukan biru-abu bawaan.
  */
+
+const PHOTO_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'demo-photos')
+
+/**
+ * Memuat foto demo dan memotongnya ke ukuran yang diminta.
+ *
+ * Mengembalikan `null` bila berkasnya belum diunduh, supaya pemanggil dapat
+ * jatuh ke gambar generatif alih-alih menggagalkan seluruh seeding.
+ */
+export const photograph = async (
+  key: DemoPhotoKey,
+  width: number,
+  height: number,
+): Promise<Buffer | null> => {
+  try {
+    const file = await fs.readFile(path.join(PHOTO_DIR, `${key}.webp`))
+    return await sharp(file)
+      // `attention` memilih bagian paling menonjol, bukan sekadar tengah —
+      // bangunan tidak terpotong sembarangan saat rasio gambar berubah.
+      .resize(width, height, { fit: 'cover', position: 'attention' })
+      .jpeg({ quality: 82 })
+      .toBuffer()
+  } catch {
+    return null
+  }
+}
 
 type Palette = { from: string; to: string; accent: string }
 
 const PALETTES: Palette[] = [
-  { from: '#1b263b', to: '#415a77', accent: '#c9a227' },
-  { from: '#2f3e46', to: '#52796f', accent: '#d8b45a' },
-  { from: '#22223b', to: '#4a4e69', accent: '#c9ada7' },
-  { from: '#001219', to: '#005f73', accent: '#ee9b00' },
-  { from: '#352f44', to: '#5c5470', accent: '#dbd8e3' },
-  { from: '#1d2d44', to: '#3e5c76', accent: '#f0ebd8' },
+  { from: '#141414', to: '#4a3a24', accent: '#d4a85c' },
+  { from: '#1b1a17', to: '#6f5220', accent: '#f5ecdc' },
+  { from: '#22201c', to: '#5a4a33', accent: '#d4a85c' },
+  { from: '#2a2a2a', to: '#6b6b6b', accent: '#d4a85c' },
+  { from: '#191714', to: '#8a6425', accent: '#f5ecdc' },
+  { from: '#242019', to: '#52483a', accent: '#d4a85c' },
 ]
 
 /** Bilangan acak yang dapat diulang, supaya gambar yang sama selalu identik. */
@@ -98,15 +136,36 @@ export const architecturalImage = async (seed: number, width = 1600, height = 12
   return sharp(Buffer.from(svg)).jpeg({ quality: 84 }).toBuffer()
 }
 
-/** Potret abstrak untuk foto tim — siluet kepala dan bahu di atas gradien. */
+/** Latar potret: turunan warna `paper` dan `accent-soft` dari token situs. */
+const PORTRAIT_GROUNDS = [
+  { from: '#f2f0ec', to: '#ddd6c8' },
+  { from: '#f5ecdc', to: '#e3d6bd' },
+  { from: '#faf9f7', to: '#e4e1dc' },
+  { from: '#efeae1', to: '#d8cfbf' },
+]
+
+/**
+ * Potret pengganti untuk foto tim dan testimoni.
+ *
+ * Tetap abstrak, berbeda dari bagian situs lain yang memakai foto sungguhan.
+ * Memasang wajah orang yang benar-benar ada di bawah nama pegawai dan kutipan
+ * testimoni karangan berarti mengaku-akui orang itu bekerja di sini — keliru,
+ * dan pada situs yang dapat diakses umum bisa merugikan yang bersangkutan.
+ * Siluetnya jelas terbaca sebagai tempat kosong yang menunggu foto asli.
+ */
 export const portraitImage = async (seed: number, size = 900) => {
-  const palette = PALETTES[(seed + 2) % PALETTES.length]!
+  const ground = PORTRAIT_GROUNDS[seed % PORTRAIT_GROUNDS.length]!
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
-    ${gradientDefs(palette, seed)}
-    <rect width="100%" height="100%" fill="url(#bg)"/>
-    <circle cx="${size / 2}" cy="${size * 0.38}" r="${size * 0.15}" fill="#ffffff" fill-opacity="0.22"/>
-    <path d="M ${size * 0.22} ${size} Q ${size * 0.5} ${size * 0.58} ${size * 0.78} ${size} Z" fill="#ffffff" fill-opacity="0.18"/>
-    <rect width="100%" height="100%" fill="url(#glow)"/>
+    <defs>
+      <linearGradient id="ground" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="${ground.from}"/>
+        <stop offset="100%" stop-color="${ground.to}"/>
+      </linearGradient>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#ground)"/>
+    <circle cx="${size / 2}" cy="${size * 0.38}" r="${size * 0.155}" fill="#6b6b6b" fill-opacity="0.38"/>
+    <path d="M ${size * 0.2} ${size} Q ${size * 0.5} ${size * 0.57} ${size * 0.8} ${size} Z" fill="#6b6b6b" fill-opacity="0.32"/>
+    <rect x="0" y="${size - size * 0.014}" width="100%" height="${size * 0.014}" fill="#8a6425" fill-opacity="0.55"/>
   </svg>`
   return sharp(Buffer.from(svg)).jpeg({ quality: 84 }).toBuffer()
 }
@@ -114,7 +173,7 @@ export const portraitImage = async (seed: number, size = 900) => {
 /** Logo klien abstrak: bentuk geometris + balok teks, tanpa meniru merek nyata. */
 export const clientLogoImage = async (seed: number, width = 480, height = 200) => {
   const random = seededRandom(seed + 31)
-  const tone = '#4a4e69'
+  const tone = '#2a2a2a'
   const marks = [
     `<circle cx="70" cy="100" r="34" fill="${tone}" fill-opacity="0.85"/>`,
     `<rect x="36" y="66" width="68" height="68" fill="${tone}" fill-opacity="0.85"/>`,

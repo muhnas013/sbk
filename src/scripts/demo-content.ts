@@ -1,8 +1,24 @@
-/** Teks konten demo, dipisah dari logika seeding agar mudah ditinjau. */
+/**
+ * Teks konten demo, dipisah dari logika seeding agar mudah ditinjau.
+ *
+ * Field `photo` dan `gallery` menunjuk foto di `demo-photos.ts`. Klausa
+ * `satisfies` di akhir tiap daftar membuat salah ketik nama foto ketahuan saat
+ * `npm run typecheck`, bukan saat seeding berjalan setengah jalan.
+ */
+import type { DemoPhotoKey } from './demo-photos'
+
+/**
+ * Bentuk minimum yang diperiksa. `Record<string, unknown>` membuat field lain
+ * lolos begitu saja — yang diperiksa hanya nama fotonya, sedangkan tipe field
+ * lain tetap disimpulkan apa adanya oleh TypeScript.
+ */
+type WithPhoto = { photo: DemoPhotoKey } & Record<string, unknown>
+type WithGallery = WithPhoto & { gallery: readonly DemoPhotoKey[] }
 
 export const DIVISIONS = [
   {
     name: 'Konstruksi',
+    photo: 'divisi-konstruksi',
     nameEn: 'Construction',
     icon: 'building' as const,
     summary:
@@ -14,6 +30,7 @@ export const DIVISIONS = [
   },
   {
     name: 'Konsultansi & Perencanaan',
+    photo: 'divisi-konsultansi',
     nameEn: 'Consulting & Planning',
     icon: 'ruler' as const,
     summary:
@@ -25,6 +42,7 @@ export const DIVISIONS = [
   },
   {
     name: 'Pengadaan & Supplier',
+    photo: 'divisi-pengadaan',
     nameEn: 'Procurement & Supply',
     icon: 'truck' as const,
     summary:
@@ -36,6 +54,7 @@ export const DIVISIONS = [
   },
   {
     name: 'Jasa Lainnya',
+    photo: 'divisi-jasa-lainnya',
     nameEn: 'Other Services',
     icon: 'wrench' as const,
     summary:
@@ -45,12 +64,13 @@ export const DIVISIONS = [
     description:
       'Di luar tiga lini utama, perusahaan menyediakan jasa pendukung yang sering dibutuhkan bersamaan dengan pekerjaan konstruksi: penyewaan alat berat beserta operatornya, pemeliharaan berkala bangunan, serta pekerjaan perbaikan berskala kecil.',
   },
-]
+] satisfies readonly WithPhoto[]
 
 export const SERVICES = [
   {
     division: 0,
     title: 'Pembangunan Gedung',
+    photo: 'layanan-gedung',
     titleEn: 'Building Construction',
     summary:
       'Gedung kantor, sekolah, fasilitas kesehatan, dan bangunan publik lainnya, dari pondasi hingga finishing.',
@@ -97,6 +117,7 @@ export const SERVICES = [
   {
     division: 0,
     title: 'Pekerjaan Jalan & Jembatan',
+    photo: 'layanan-jalan-jembatan',
     titleEn: 'Roads & Bridges',
     summary:
       'Peningkatan jalan, pengerasan, pengaspalan, serta pembangunan dan rehabilitasi jembatan.',
@@ -131,6 +152,7 @@ export const SERVICES = [
   {
     division: 0,
     title: 'Bangunan Air & Irigasi',
+    photo: 'layanan-air',
     titleEn: 'Water & Irrigation Works',
     summary:
       'Rehabilitasi jaringan irigasi, normalisasi saluran, bendung sederhana, dan bangunan pengendali banjir.',
@@ -146,6 +168,7 @@ export const SERVICES = [
   {
     division: 1,
     title: 'Perencanaan & Desain Teknis',
+    photo: 'layanan-perencanaan',
     titleEn: 'Technical Planning & Design',
     summary: 'Gambar kerja, perhitungan struktur, spesifikasi teknis, dan rencana anggaran biaya.',
     scope: [
@@ -173,6 +196,7 @@ export const SERVICES = [
   {
     division: 1,
     title: 'Pengawasan Pelaksanaan',
+    photo: 'layanan-pengawasan',
     titleEn: 'Construction Supervision',
     summary:
       'Pengawasan harian mutu dan volume pekerjaan, pelaporan berkala, serta pendampingan serah terima.',
@@ -188,6 +212,7 @@ export const SERVICES = [
   {
     division: 1,
     title: 'Studi Kelayakan',
+    photo: 'layanan-studi-kelayakan',
     titleEn: 'Feasibility Studies',
     summary:
       'Kajian teknis, ekonomi, dan lingkungan sebelum keputusan investasi pembangunan diambil.',
@@ -203,6 +228,7 @@ export const SERVICES = [
   {
     division: 2,
     title: 'Pengadaan Material Konstruksi',
+    photo: 'layanan-material',
     titleEn: 'Construction Material Supply',
     summary:
       'Semen, besi, agregat, kayu, dan material bangunan lain dengan dokumen asal barang yang lengkap.',
@@ -223,6 +249,7 @@ export const SERVICES = [
   {
     division: 3,
     title: 'Sewa Alat Berat',
+    photo: 'layanan-alat-berat',
     titleEn: 'Heavy Equipment Rental',
     summary:
       'Excavator, vibro roller, dump truck, dan concrete mixer beserta operator berpengalaman.',
@@ -235,11 +262,13 @@ export const SERVICES = [
     process: [],
     faq: [],
   },
-]
+] satisfies readonly WithPhoto[]
 
 export const PROJECTS = [
   {
     title: 'Pembangunan Gedung Kantor Kecamatan Kandangan',
+    photo: 'proyek-kantor',
+    gallery: ['kerja-gedung-1', 'kerja-gedung-5', 'bangunan-5'],
     location: 'Kandangan',
     division: 0,
     category: 0,
@@ -256,6 +285,8 @@ export const PROJECTS = [
   },
   {
     title: 'Peningkatan Jalan Poros Desa Angkinang',
+    photo: 'proyek-jalan',
+    gallery: ['kerja-jalan-1', 'kerja-jalan-5', 'kerja-jalan-2'],
     location: 'Angkinang',
     division: 0,
     category: 1,
@@ -271,6 +302,8 @@ export const PROJECTS = [
   },
   {
     title: 'Rehabilitasi Jaringan Irigasi Daha Selatan',
+    photo: 'proyek-irigasi',
+    gallery: ['kerja-air-1', 'kerja-air-5', 'kerja-air-2'],
     location: 'Daha Selatan',
     division: 0,
     category: 2,
@@ -281,6 +314,8 @@ export const PROJECTS = [
   },
   {
     title: 'Pembangunan Jembatan Penghubung Simpur',
+    photo: 'proyek-jembatan',
+    gallery: ['kerja-jalan-3', 'kerja-jalan-4', 'kerja-gedung-2'],
     location: 'Simpur',
     division: 0,
     category: 1,
@@ -297,6 +332,8 @@ export const PROJECTS = [
   },
   {
     title: 'Perencanaan Teknis Gedung Puskesmas Sungai Raya',
+    photo: 'proyek-puskesmas',
+    gallery: ['bangunan-3', 'bangunan-4', 'kerja-gedung-6'],
     location: 'Sungai Raya',
     division: 1,
     category: 0,
@@ -313,6 +350,8 @@ export const PROJECTS = [
   },
   {
     title: 'Pengawasan Pembangunan Gedung Sekolah Telaga Langsat',
+    photo: 'proyek-sekolah',
+    gallery: ['bangunan-1', 'bangunan-2', 'kerja-gedung-7'],
     location: 'Telaga Langsat',
     division: 1,
     category: 0,
@@ -324,6 +363,8 @@ export const PROJECTS = [
   },
   {
     title: 'Pengadaan Material Konstruksi Paket Infrastruktur Desa',
+    photo: 'proyek-material',
+    gallery: ['kerja-material-1', 'kerja-material-2', 'kerja-material-3'],
     location: 'Hulu Sungai Selatan',
     division: 2,
     category: 3,
@@ -334,6 +375,8 @@ export const PROJECTS = [
   },
   {
     title: 'Normalisasi Saluran Drainase Kota Kandangan',
+    photo: 'proyek-drainase',
+    gallery: ['kerja-air-3', 'kerja-air-4', 'kerja-gedung-3'],
     location: 'Kandangan',
     division: 0,
     category: 2,
@@ -345,6 +388,8 @@ export const PROJECTS = [
   },
   {
     title: 'Pembangunan Pasar Desa Loksado',
+    photo: 'proyek-pasar',
+    gallery: ['bangunan-6', 'kerja-gedung-4', 'kerja-gedung-8'],
     location: 'Loksado',
     division: 0,
     category: 0,
@@ -353,7 +398,7 @@ export const PROJECTS = [
     scope: ['Pekerjaan struktur los pasar', 'Atap baja ringan', 'Sanitasi dan pengelolaan sampah'],
     summary: 'Pembangunan los pasar desa beserta fasilitas sanitasi dan pengelolaan sampah.',
   },
-]
+] satisfies readonly WithGallery[]
 
 export const TEAM = [
   {
@@ -454,35 +499,40 @@ export const TESTIMONIALS = [
 export const POSTS = [
   {
     title: 'Penyelesaian Pembangunan Gedung Kantor Kecamatan Kandangan',
+    photo: 'berita-1',
     excerpt:
       'Pekerjaan diselesaikan dalam 180 hari kalender dan telah diserahterimakan kepada pemberi kerja.',
     body: 'Pembangunan gedung kantor kecamatan dua lantai dengan luas bangunan 840 m² telah selesai dan diserahterimakan. Pekerjaan mencakup struktur beton bertulang, pekerjaan arsitektur, serta instalasi listrik dan sanitasi. Seluruh tahapan diselesaikan sesuai jadwal tanpa perpanjangan waktu.',
   },
   {
     title: 'Penerapan Sistem Manajemen Keselamatan Konstruksi di Seluruh Paket Pekerjaan',
+    photo: 'berita-2',
     excerpt:
       'Seluruh pekerja lapangan kini wajib mengikuti pengarahan keselamatan sebelum memulai pekerjaan harian.',
     body: 'Perusahaan menerapkan prosedur keselamatan yang seragam di seluruh paket pekerjaan, mencakup pengarahan harian, penggunaan alat pelindung diri, dan pencatatan insiden. Penerapan ini menjadi syarat internal sebelum pekerjaan di suatu lokasi dapat dimulai.',
   },
   {
     title: 'Peningkatan Jalan Poros Desa Angkinang Rampung Lebih Cepat',
+    photo: 'berita-3',
     excerpt:
       'Ruas jalan sepanjang 3,2 km kini sudah dapat dilalui kendaraan roda empat sepanjang tahun.',
     body: 'Pekerjaan peningkatan jalan poros desa sepanjang 3,2 km telah rampung. Ruas yang sebelumnya berupa jalan tanah dan sulit dilalui pada musim hujan kini berlapis aspal hotmix dengan saluran drainase di kedua sisi.',
   },
   {
     title: 'Kerja Sama Pengadaan Material untuk Program Infrastruktur Desa',
+    photo: 'berita-4',
     excerpt:
       'Pengiriman material dijadwalkan bertahap ke dua belas titik lokasi mengikuti progres pekerjaan.',
     body: 'Perusahaan dipercaya menyediakan material konstruksi untuk program pembangunan infrastruktur di dua belas desa. Pengiriman dijadwalkan bertahap mengikuti progres pekerjaan di masing-masing lokasi agar material tidak menumpuk.',
   },
   {
     title: 'Pembukaan Lowongan Pelaksana Lapangan dan Juru Ukur',
+    photo: 'berita-5',
     excerpt:
       'Perusahaan membuka kesempatan bagi tenaga teknis untuk bergabung pada paket pekerjaan tahun ini.',
     body: 'Seiring bertambahnya paket pekerjaan tahun ini, perusahaan membuka lowongan untuk posisi pelaksana lapangan dan juru ukur. Berkas lamaran dapat dikirim melalui halaman Karier di situs ini.',
   },
-]
+] satisfies readonly WithPhoto[]
 
 export const JOBS = [
   {

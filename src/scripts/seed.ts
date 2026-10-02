@@ -12,7 +12,15 @@
  */
 import { getPayload } from 'payload'
 import config from '../payload.config'
-import { architecturalImage, certificateImage, clientLogoImage, portraitImage } from './demo-images'
+import {
+  architecturalImage,
+  certificateImage,
+  clientLogoImage,
+  photograph,
+  portraitImage,
+} from './demo-images'
+import { DEMO_PHOTOS, type DemoPhotoKey } from './demo-photos'
+import { ensureDemoPhotos } from './fetch-demo-photos'
 import {
   CERTIFICATIONS,
   CLIENTS,
@@ -91,6 +99,15 @@ const seed = async () => {
     process.exit(1)
   }
 
+  payload.logger.info('Menyiapkan foto demo…')
+  const { downloaded, failed } = await ensureDemoPhotos()
+  if (downloaded > 0) payload.logger.info(`${downloaded} foto demo diunduh.`)
+  if (failed.length > 0) {
+    payload.logger.warn(
+      `${failed.length} foto gagal diunduh; bagian itu memakai gambar cadangan. Ulangi dengan \`npm run photos\` setelah jaringan pulih.`,
+    )
+  }
+
   payload.logger.info('Mengisi konten demo…')
 
   // Bersihkan konten lama supaya script dapat dijalankan berulang.
@@ -123,20 +140,54 @@ const seed = async () => {
     data: Buffer,
     mimetype = 'image/jpeg',
     ext = 'jpg',
+    credit?: string,
   ) =>
     payload.create({
       collection: 'media',
-      data: { alt },
+      data: { alt, credit },
       file: { data, mimetype, name: `${name}.${ext}`, size: data.length },
     })
+
+  // Dipakai bila foto gagal diunduh: gambar generatif berganti-ganti rupa
+  // supaya halaman tidak dipenuhi satu gambar yang sama persis.
+  let fallbackSeed = 0
+
+  /**
+   * Mengunggah foto demo beserta kreditnya. Lisensi Commons menuntut nama
+   * pemotret ikut tercatat, jadi kreditnya disimpan di field `credit` media —
+   * bukan sekadar di berkas KREDIT.md yang mudah tertinggal saat foto dipakai
+   * ulang dari pustaka media.
+   */
+  const uploadPhoto = async (
+    name: string,
+    alt: string,
+    key: DemoPhotoKey,
+    width = 1600,
+    height = 1200,
+  ) => {
+    const photo = await photograph(key, width, height)
+    if (!photo) {
+      fallbackSeed += 1
+      return upload(name, alt, await architecturalImage(fallbackSeed, width, height))
+    }
+    const { author, license } = DEMO_PHOTOS[key]
+    return upload(
+      name,
+      alt,
+      photo,
+      'image/jpeg',
+      'jpg',
+      `${author} — ${license}, via Wikimedia Commons (foto contoh)`,
+    )
+  }
 
   // --- Divisi -------------------------------------------------------------
   const divisions = []
   for (const [index, item] of DIVISIONS.entries()) {
-    const cover = await upload(
+    const cover = await uploadPhoto(
       `divisi-${slugify(item.name)}`,
       `Ilustrasi pekerjaan divisi ${item.name}`,
-      await architecturalImage(index + 1),
+      item.photo,
     )
     const doc = await payload.create({
       collection: 'divisions',
@@ -176,10 +227,10 @@ const seed = async () => {
 
   // --- Layanan ------------------------------------------------------------
   for (const [index, item] of SERVICES.entries()) {
-    const cover = await upload(
+    const cover = await uploadPhoto(
       `layanan-${slugify(item.title)}`,
       `Ilustrasi layanan ${item.title}`,
-      await architecturalImage(index + 20),
+      item.photo,
     )
     const doc = await payload.create({
       collection: 'services',
@@ -212,17 +263,17 @@ const seed = async () => {
 
   // --- Proyek -------------------------------------------------------------
   for (const [index, item] of PROJECTS.entries()) {
-    const cover = await upload(
+    const cover = await uploadPhoto(
       `proyek-${slugify(item.title)}`,
       `Dokumentasi ${item.title}`,
-      await architecturalImage(index + 40),
+      item.photo,
     )
     const gallery = []
-    for (let g = 0; g < 3; g += 1) {
-      const photo = await upload(
+    for (const [g, key] of item.gallery.entries()) {
+      const photo = await uploadPhoto(
         `proyek-${slugify(item.title)}-${g + 1}`,
         `Dokumentasi ${item.title}, foto ${g + 1}`,
-        await architecturalImage(index * 7 + g + 60),
+        key,
       )
       gallery.push({ image: photo.id, caption: `Dokumentasi pelaksanaan tahap ${g + 1}` })
     }
@@ -365,10 +416,12 @@ const seed = async () => {
   })
 
   for (const [index, item] of POSTS.entries()) {
-    const cover = await upload(
+    const cover = await uploadPhoto(
       `berita-${slugify(item.title).slice(0, 40)}`,
       `Gambar untuk artikel: ${item.title}`,
-      await architecturalImage(index + 90, 1600, 900),
+      item.photo,
+      1600,
+      900,
     )
     const published = new Date()
     published.setDate(published.getDate() - index * 11 - 3)
@@ -512,20 +565,24 @@ const seed = async () => {
     'image/png',
     'png',
   )
-  const heroImage = await upload(
+  const heroImage = await uploadPhoto(
     'beranda-hero',
-    'Pekerjaan konstruksi gedung bertingkat',
-    await architecturalImage(5, 2400, 1400),
+    'Jembatan beton hasil pekerjaan infrastruktur di Kalimantan Selatan',
+    'beranda-hero',
+    2400,
+    1400,
   )
-  const aboutImage = await upload(
+  const aboutImage = await uploadPhoto(
     'tentang-kami',
-    'Tim perusahaan meninjau lokasi pekerjaan',
-    await architecturalImage(12),
+    'Juru ukur mengambil data lapangan sebelum pekerjaan dimulai',
+    'tentang-kami',
   )
-  const aboutHero = await upload(
+  const aboutHero = await uploadPhoto(
     'tentang-kami-hero',
-    'Bangunan hasil pekerjaan perusahaan',
-    await architecturalImage(17, 2400, 1200),
+    'Bangunan kantor pemerintah di Kalimantan Selatan',
+    'tentang-hero',
+    2400,
+    1200,
   )
 
   await payload.updateGlobal({

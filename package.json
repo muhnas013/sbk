@@ -23,6 +23,8 @@
     "seed": "tsx --env-file=.env src/scripts/seed.ts",
     "photos": "tsx src/scripts/fetch-demo-photos.ts",
     "seed:container": "tsx src/scripts/seed.ts",
+    "create:admin": "tsx --env-file=.env src/scripts/create-admin.ts",
+    "create:admin:container": "tsx src/scripts/create-admin.ts",
     "prepare": "husky",
     "purge:applications": "tsx --env-file=.env src/scripts/purge-applications.ts",
     "verify:contact": "tsx --env-file=.env src/scripts/verify-contact.ts"

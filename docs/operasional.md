@@ -91,8 +91,29 @@ DNS domain sudah mengarah ke IP VPS sebelum langkah ini.
 
 ### 2.4 Membuat pengguna pertama
 
-Buka `https://<domain>/admin` — Payload meminta pembuatan akun pertama.
-Akun ini otomatis menjadi Super Admin.
+Buat akunnya lewat script, **sebelum** domain diarahkan ke server:
+
+```bash
+ADMIN_EMAIL=admin@sabhumikaryabarito.com \
+ADMIN_PASSWORD='<kata sandi kuat>' \
+ADMIN_NAME='Administrator' \
+  docker compose --profile tools run --rm create-admin
+```
+
+Script membuat akun berperan Super Admin, lalu menutup halaman pendaftaran
+dengan sendirinya — Payload hanya membuka `/admin/create-first-user` selama
+tabel pengguna masih kosong.
+
+> **Jangan andalkan halaman pendaftaran di situs yang sudah publik.** Halaman
+> itu terbuka bagi siapa pun selama belum ada satu pun pengguna, dan pilihan
+> Peran ikut ditampilkan di sana. Siapa pun yang menemukannya lebih dulu dapat
+> mengangkat dirinya menjadi Super Admin.
+
+Kata sandi wajib minimal 12 karakter serta memuat huruf besar, huruf kecil,
+dan angka — sama dengan kebijakan di panel.
+
+Menjalankan ulang pada email yang sama **mengatur ulang kata sandinya**, jadi
+perintah ini sekaligus jalan pemulihan bila Super Admin kehilangan akses.
 
 ---
 

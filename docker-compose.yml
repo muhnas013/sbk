@@ -62,6 +62,33 @@ services:
     command: ['npm', 'run', 'seed:container']
     networks: [internal]
 
+  # Membuat akun Super Admin pertama tanpa halaman pendaftaran publik:
+  #   ADMIN_EMAIL=... ADMIN_PASSWORD=... \
+  #     docker compose --profile tools run --rm create-admin
+  # Jalankan segera setelah deploy pertama. Selama tabel pengguna masih kosong,
+  # /admin/create-first-user terbuka bagi siapa pun yang menemukannya.
+  # Dijalankan ulang pada email yang sama = mengatur ulang kata sandinya.
+  create-admin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+    profiles: ['tools']
+    restart: 'no'
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URI: postgres://${POSTGRES_USER:-sbk}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-sbk}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?PAYLOAD_SECRET wajib diisi}
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?NEXT_PUBLIC_SERVER_URL wajib diisi}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?ADMIN_EMAIL wajib diisi}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD wajib diisi}
+      ADMIN_NAME: ${ADMIN_NAME:-Administrator}
+    command: ['npm', 'run', 'create:admin:container']
+    networks: [internal]
+
   app:
     build:
       context: .
